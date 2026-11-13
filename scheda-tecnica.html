@@ -1,0 +1,252 @@
+<!doctype html>
+<!--
+  Scheda tecnica — GDPR AI-Sanitizer
+  ---------------------------------------------------------------------------
+  Documento descrittivo, non consulenza legale. Si stampa in due facciate A4.
+
+  PRIMA DI PUBBLICARE, sostituire:
+    Lorenzo Franchini        nome e cognome
+    lorenzo.franchinilf.04@gmail.com       indirizzo di contatto (dominio proprio)
+    boszboll.github.io/sito-professionisti     dominio del sito
+    novembre 2026   mese e anno di revisione
+    1.1.0 beta    versione dell'estensione descritta (es. 1.1.0)
+-->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scheda tecnica — GDPR AI-Sanitizer</title>
+<meta name="robots" content="index, follow">
+<link rel="icon" href="data:,">
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto; padding: 32px 24px 56px; max-width: 820px;
+    background: #fff; color: #111827;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 12.5pt; line-height: 1.5;
+  }
+  h1 { font-size: 20pt; margin: 0 0 4px; letter-spacing: -0.01em; }
+  .sub { color: #4b5563; font-size: 10.5pt; margin: 0 0 22px; }
+  h2 {
+    font-size: 12pt; margin: 26px 0 8px; padding-bottom: 5px;
+    border-bottom: 1px solid #d1d5db; text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  h3 { font-size: 11pt; margin: 16px 0 6px; }
+  p { margin: 0 0 9px; }
+  ul, ol { margin: 0 0 10px; padding-left: 20px; }
+  li { margin-bottom: 5px; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.88em; background: #f3f4f6; padding: 1px 4px; border-radius: 3px;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 11pt; }
+  th, td { text-align: left; padding: 6px 8px; border: 1px solid #d1d5db; vertical-align: top; }
+  th { background: #f9fafb; font-weight: 650; }
+  .box {
+    margin: 12px 0; padding: 11px 13px; border-left: 3px solid #1d4ed8;
+    background: #f9fafb; font-size: 11.5pt;
+  }
+  .box-warn { border-left-color: #b45309; background: #fffbeb; }
+  .flow {
+    margin: 10px 0 14px; padding: 12px; border: 1px solid #d1d5db; border-radius: 6px;
+    background: #f9fafb; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 9.5pt; line-height: 1.55; white-space: pre; overflow-x: auto;
+  }
+  .firma { margin-top: 28px; padding-top: 12px; border-top: 1px solid #d1d5db; font-size: 10.5pt; color: #4b5563; }
+  .nobreak { break-inside: avoid; page-break-inside: avoid; }
+  @media print {
+    body { padding: 0; font-size: 10.5pt; }
+    h1 { font-size: 16pt; }
+    h2 { font-size: 10pt; margin-top: 18px; }
+    table { font-size: 9.5pt; }
+    .flow { font-size: 8pt; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>GDPR AI-Sanitizer — Scheda tecnica</h1>
+<p class="sub">
+  Descrizione dell'architettura, del flusso dei dati e del ruolo ai sensi del Regolamento (UE) 2016/679.<br>
+  Versione descritta: 1.1.0 beta · Revisione: novembre 2026 · Documento di Lorenzo Franchini — boszboll.github.io/sito-professionisti
+</p>
+
+<h2>1. Che cos'è</h2>
+<p>
+  GDPR AI-Sanitizer è un'estensione per browser Chromium (Google Chrome, Microsoft Edge) che
+  individua e sostituisce i dati personali presenti in un testo selezionato dall'utente, prima
+  che quel testo venga incollato in un servizio di intelligenza artificiale o in un'altra
+  destinazione esterna.
+</p>
+<p>
+  L'elaborazione avviene <strong>interamente sul dispositivo dell'utente</strong>. L'estensione
+  non dispone di server applicativi, non invia i testi a terzi e non conserva copia di quanto
+  elaborato.
+</p>
+
+<h2>2. Flusso dei dati</h2>
+<div class="flow">UTENTE                          DISPOSITIVO DELL'UTENTE                      ESTERNO
+──────                          ───────────────────────                      ───────
+seleziona il testo
+  │
+  ├─ tasto destro → "Copia per AI (Maschera Dati)"
+  │
+  ▼
+estensione attiva
+  │
+  ├─ regole deterministiche (email, CF/P.IVA, IBAN, carte,
+  │  telefoni, date, documenti, credenziali, indirizzi...)
+  │
+  ├─ modello di IA locale (nomi, aziende, luoghi)
+  │     └─ file del modello già in cache IndexedDB
+  │
+  ▼
+finestra di revisione (testo modificabile)
+  │
+  ├─ l'utente corregge, censura, rilegge
+  │
+  ▼
+copia negli appunti → incolla dove serve
+                                    nessun testo esce dal dispositivo in nessun punto</div>
+<p>
+  L'unica comunicazione in uscita è il <strong>download iniziale dei file del modello di IA</strong>,
+  effettuato una sola volta al primo utilizzo dell'analisi AI e relativo a un archivio pubblico di
+  modelli. In quella richiesta non è contenuto alcun testo dell'utente.
+</p>
+
+<h2>3. Connessioni di rete effettuate</h2>
+<table class="nobreak">
+  <tr><th>Destinazione</th><th>Quando</th><th>Contenuto trasmesso</th></tr>
+  <tr>
+    <td><code>huggingface.co</code></td>
+    <td>Solo al primo uso dell'analisi AI, e solo se il modello non è già in cache</td>
+    <td>Richiesta GET dei file pubblici del modello. Nessun dato dell'utente.</td>
+  </tr>
+</table>
+<p>
+  Non esistono altre connessioni: nessun servizio di analytics, nessun sistema di tracciamento,
+  nessun invio di telemetria, nessuna pubblicità. Le richieste di rete sono vincolate da un
+  elenco esplicito di file ammessi: qualunque richiesta verso altri indirizzi viene bloccata
+  dal codice.
+</p>
+
+<h2>4. Permessi richiesti e motivazione</h2>
+<table class="nobreak">
+  <tr><th>Permesso</th><th>Perché è necessario</th></tr>
+  <tr><td><code>activeTab</code></td><td>Accedere alla scheda attiva solo nel momento in cui l'utente sceglie la voce di menu. Nessun accesso permanente alle pagine navigate.</td></tr>
+  <tr><td><code>scripting</code></td><td>Inserire l'interfaccia di revisione nella pagina, su richiesta dell'utente.</td></tr>
+  <tr><td><code>contextMenus</code></td><td>Aggiungere la voce «Copia per AI (Maschera Dati)» al menu del tasto destro.</td></tr>
+  <tr><td><code>storage</code></td><td>Conservare in locale la cache del modello e le preferenze.</td></tr>
+  <tr><td><code>offscreen</code></td><td>Eseguire il modello di IA in un contesto separato, senza rallentare la pagina.</td></tr>
+  <tr><td>Accesso host a <code>huggingface.co</code></td><td>Scaricare i file pubblici del modello. È l'unico accesso host dichiarato.</td></tr>
+</table>
+
+<h2>5. Dati conservati sul dispositivo</h2>
+<table class="nobreak">
+  <tr><th>Dato</th><th>Dove</th><th>Contenuto</th></tr>
+  <tr><td>Cache del modello</td><td>IndexedDB dell'estensione</td><td>File pubblici del modello di IA. Nessun dato dell'utente.</td></tr>
+  <tr><td>Preferenze e contatore d'uso</td><td><code>chrome.storage.local</code></td><td>Data corrente e numero di utilizzi giornalieri. Nessun testo.</td></tr>
+</table>
+<p>
+  <strong>I testi elaborati non vengono mai salvati</strong>, né su disco né in alcun registro,
+  e non sono accessibili a terzi. La rimozione dell'estensione elimina tutto quanto sopra.
+</p>
+
+<h2>6. Ruolo ai sensi del GDPR</h2>
+<div class="box">
+  <p>
+    <strong>Il fornitore non è responsabile del trattamento ai sensi dell'art. 28 GDPR.</strong>
+  </p>
+  <p style="margin-bottom:0">
+    L'art. 4, punto 8, del Regolamento definisce «responsabile» il soggetto che tratta dati
+    personali <em>per conto del titolare</em>. Il ruolo presuppone quindi un trattamento svolto
+    nell'interesse e su istruzione di un altro soggetto. Nel caso di specie:
+  </p>
+  <ul style="margin-bottom:0">
+    <li>il fornitore <strong>non riceve</strong> i dati personali contenuti nei testi;</li>
+    <li><strong>non vi accede</strong> in alcun modo, nemmeno per assistenza tecnica;</li>
+    <li><strong>non ne determina</strong> finalità né mezzi del trattamento;</li>
+    <li>non dispone di infrastrutture su cui i dati transitino o siano conservati.</li>
+  </ul>
+</div>
+<p>
+  Il trattamento avviene esclusivamente nell'ambito del dominio fisico del titolare, che resta
+  l'unico soggetto a decidere quali testi elaborare e per quali finalità. Il fornitore si limita
+  a distribuire uno strumento software, senza assumere la disponibilità dei dati.
+</p>
+<p>
+  Per questo motivo <strong>non è necessario stipulare un accordo di nomina a responsabile
+  del trattamento</strong>: non esistono i presupposti oggettivi dell'art. 28. Resta naturalmente
+  in capo allo studio, in qualità di titolare, la valutazione autonoma delle proprie finalità,
+  della base giuridica e dell'eventuale necessità di una valutazione d'impatto (art. 35).
+</p>
+<p>
+  Si segnala, per completezza, che se in futuro venisse introdotta una componente server
+  (sincronizzazione, elaborazione remota, telemetria), il ruolo cambierebbe e il fornitore
+  assumerebbe quello di responsabile del trattamento, con i conseguenti obblighi contrattuali.
+  Allo stato attuale tale componente non esiste.
+</p>
+
+<h2>7. Misure tecniche</h2>
+<ul>
+  <li><strong>Elaborazione locale</strong>: nessun trasferimento di testo, nessun server applicativo.</li>
+  <li><strong>Vincolo sulle richieste di rete</strong>: elenco esplicito di file e domini ammessi; ogni altra richiesta è bloccata.</li>
+  <li><strong>Nessuna esecuzione di codice remoto</strong>: la Content Security Policy dell'estensione consente solo codice incluso nel pacchetto.</li>
+  <li><strong>Nessun uso di <code>innerHTML</code></strong>: il testo dell'utente entra nel DOM esclusivamente come testo, quindi non può essere interpretato come markup o codice.</li>
+  <li><strong>Nessuna registrazione dei contenuti</strong>: i testi non sono scritti nella console né in alcun archivio.</li>
+  <li><strong>Rilascio della memoria</strong>: il modello viene scaricato dalla memoria dopo cinque minuti di inattività.</li>
+</ul>
+
+<h2>8. Limiti dichiarati</h2>
+<div class="box box-warn nobreak">
+  <ul style="margin:0">
+    <li><strong>Nessuno strumento automatico individua tutti i dati personali.</strong> Restano possibili falsi negativi, in particolare su nomi rari, soprannomi, riferimenti indiretti e dati deducibili dal contesto.</li>
+    <li>La revisione umana del testo prodotto è <strong>necessaria</strong> e l'estensione la richiede esplicitamente prima di ogni copia.</li>
+    <li>L'estensione opera sul testo selezionato nel browser: <strong>non interviene</strong> su applicazioni desktop (Word, Outlook, Acrobat) né su file allegati.</li>
+    <li>Non costituisce strumento clinico né è progettata per il trattamento di categorie particolari di dati (art. 9 GDPR) senza adeguata valutazione autonoma del titolare.</li>
+    <li><strong>Non esiste alcuna certificazione</strong> GDPR o AI Act per strumenti di questa natura: il presente documento è descrittivo e non sostituisce la valutazione del titolare o del suo consulente.</li>
+  </ul>
+</div>
+
+<h2>9. Qualificazione ai sensi del Regolamento (UE) 2024/1689 (AI Act)</h2>
+<p>
+  L'estensione include un modello di IA utilizzato per il riconoscimento di entità denominate
+  (persone, organizzazioni, luoghi) all'interno di un testo. Il sistema non rientra negli usi
+  elencati nell'Allegato III del Regolamento e non costituisce componente di sicurezza di un
+  prodotto: è riconducibile alla categoria a <strong>rischio minimo</strong>, per la quale il
+  Regolamento non prevede obblighi specifici.
+</p>
+<p>
+  Resta in capo allo studio, in qualità di <em>deployer</em>, l'adempimento dell'art. 4 del
+  Regolamento (alfabetizzazione del personale che utilizza sistemi di IA) e, per i professionisti
+  intellettuali, dell'art. 13 della legge 23 settembre 2025, n. 132 (informativa al cliente
+  sull'uso di strumenti di IA).
+</p>
+
+<h2>10. Versioni e integrità</h2>
+<table class="nobreak">
+  <tr><th>Versione</th><td>1.1.0 beta</td></tr>
+  <tr><th>Distribuzione</th><td>Chrome Web Store (pacchetto firmato e revisionato da Google); disponibile anche per Microsoft Edge</td></tr>
+  <tr><th>Codice sorgente</th><td>github.com/Boszboll</td></tr>
+  <tr><th>Modello di IA</th><td><code>Xenova/distilbert-base-multilingual-cased-ner-hrl</code>, quantizzato q8, licenza AFL-3.0 (attribuzione inclusa nel pacchetto)</td></tr>
+  <tr><th>Requisiti</th><td>Chrome o Edge versione 116 o successive</td></tr>
+</table>
+
+<h2>11. Contatti</h2>
+<p>
+  Lorenzo Franchini — <a href="mailto:lorenzo.franchinilf.04@gmail.com">lorenzo.franchinilf.04@gmail.com</a> — boszboll.github.io/sito-professionisti<br>
+  Risposta entro tre giorni lavorativi.
+</p>
+
+<p class="firma">
+  Documento descrittivo redatto in buona fede e basato sulle caratteristiche tecniche della
+  versione indicata. Non costituisce consulenza legale né parere professionale: lo studio è
+  invitato a valutare autonomamente il proprio contesto con il supporto dei propri consulenti.
+  Il documento può essere aggiornato in caso di modifiche all'architettura del prodotto.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!doctype html>
+<!--
+  Landing page per studi professionali — GDPR AI-Sanitizer
+  ---------------------------------------------------------------------------
+  File autosufficiente: nessun font esterno, nessuno script di terze parti,
+  nessun cookie, nessun analytics. Coerente con il prodotto che descrive.
+
+  PRIMA DI PUBBLICARE, sostituire i segnaposto:
+    Lorenzo Franchini          nome e cognome (es. Mario Rossi)
+    Università di Pisa    (es. Università degli Studi di Milano)
+    lorenzo.franchinilf.04@gmail.com         (es. info@tuodominio.it) — MAI una gmail
+    boszboll.github.io/sito-professionisti       (es. gdpr-sanitizer.it)
+    novembre 2026     (es. novembre 2026)
+-->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GDPR AI-Sanitizer — cancellare i dati personali prima di incollarli in un'IA</title>
+<meta name="description" content="Strumento locale che rimuove dati personali dal testo prima di incollarlo in ChatGPT o in un'altra IA. Nessun testo lascia il computer, nessun accordo ex art. 28 da firmare.">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="data:,">
+<style>
+  :root {
+    --ink: #111827;
+    --ink-soft: #4b5563;
+    --line: #e5e7eb;
+    --bg: #ffffff;
+    --bg-soft: #f9fafb;
+    --accent: #1d4ed8;
+    --accent-dark: #1e40af;
+    --warn-bg: #fffbeb;
+    --warn-line: #fcd34d;
+    --warn-ink: #92400e;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+  .wrap { width: 100%; max-width: 860px; margin: 0 auto; padding: 0 24px; }
+  header.site { border-bottom: 1px solid var(--line); }
+  header.site .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; }
+  .brand { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+  .brand span { color: var(--accent); }
+  header.site nav { display: flex; gap: 18px; font-size: 14px; }
+  header.site nav a { color: var(--ink-soft); text-decoration: none; }
+  header.site nav a:hover { color: var(--accent); text-decoration: underline; }
+
+  h1 { font-size: 40px; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 18px; font-weight: 800; }
+  h2 { font-size: 26px; line-height: 1.25; letter-spacing: -0.01em; margin: 0 0 14px; font-weight: 700; }
+  h3 { font-size: 18px; margin: 0 0 8px; font-weight: 700; }
+  p { margin: 0 0 16px; }
+  a { color: var(--accent); }
+  .lead { font-size: 20px; color: var(--ink-soft); margin-bottom: 26px; }
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: 0; }
+  section.soft { background: var(--bg-soft); }
+
+  .hero { padding: 64px 0 52px; }
+  .hero .badge {
+    display: inline-block; margin-bottom: 20px; padding: 5px 12px;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: var(--bg-soft); color: var(--ink-soft);
+    font-size: 13px; font-weight: 600;
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 13px 22px; border-radius: 10px; border: 1px solid transparent;
+    font-size: 16px; font-weight: 650; text-decoration: none; cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent-dark); }
+  .btn-secondary { background: #fff; color: var(--ink); border-color: var(--line); }
+  .btn-secondary:hover { background: var(--bg-soft); }
+  .cta-note { font-size: 14px; color: var(--ink-soft); margin: 14px 0 0; }
+
+  ol.steps { counter-reset: s; list-style: none; margin: 0 0 26px; padding: 0; }
+  ol.steps li { position: relative; padding-left: 46px; margin-bottom: 22px; }
+  ol.steps li::before {
+    counter-increment: s; content: counter(s);
+    position: absolute; left: 0; top: 0;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+  }
+
+  .demo-grid { display: grid; gap: 16px; }
+  .demo-col label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+  textarea, pre.out {
+    width: 100%; min-height: 190px; margin: 0; padding: 14px;
+    border: 1px solid #d1d5db; border-radius: 10px;
+    background: #fff; color: var(--ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13.5px; line-height: 1.6;
+    white-space: pre-wrap; overflow-wrap: anywhere; overflow-y: auto;
+  }
+  textarea { resize: vertical; }
+  textarea:focus { outline: 2px solid rgba(29, 78, 216, 0.35); border-color: var(--accent); }
+  pre.out { background: #f9fafb; }
+  pre.out .ph { background: #fde68a; color: #78350f; border-radius: 3px; padding: 0 1px; font-weight: 700; }
+  .demo-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+  .demo-count { font-size: 14px; color: var(--ink-soft); margin: 0; }
+  .demo-note { font-size: 13.5px; color: var(--ink-soft); margin: 14px 0 0; }
+
+  .box-warn { background: var(--warn-bg); border: 1px solid var(--warn-line); color: var(--warn-ink); border-radius: 10px; padding: 16px 18px; font-size: 15px; }
+  .box-warn strong { font-weight: 700; }
+
+  ul.plain { margin: 0 0 22px; padding-left: 22px; }
+  ul.plain li { margin-bottom: 8px; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; background: #f3f4f6; padding: 1px 5px; border-radius: 4px; }
+
+  dl.faq { margin: 0; }
+  dl.faq dt { font-weight: 700; margin-top: 24px; }
+  dl.faq dt:first-child { margin-top: 0; }
+  dl.faq dd { margin: 6px 0 0; color: var(--ink-soft); }
+
+  table.meta { width: 100%; border-collapse: collapse; font-size: 15px; }
+  table.meta th, table.meta td { text-align: left; padding: 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.meta th { width: 38%; color: var(--ink-soft); font-weight: 600; }
+
+  footer.site { padding: 34px 0 48px; font-size: 14px; color: var(--ink-soft); }
+  footer.site a { color: var(--ink-soft); }
+
+  @media (min-width: 720px) { .demo-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    h1 { font-size: 30px; }
+    h2 { font-size: 22px; }
+    .lead { font-size: 18px; }
+    section { padding: 42px 0; }
+    header.site nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">GDPR <span>AI-Sanitizer</span></div>
+    <nav>
+      <a href="#come-funziona">Come funziona</a>
+      <a href="#prova">Prova</a>
+      <a href="#domande">Domande</a>
+      <a href="#contatti">Contatti</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="badge">Beta gratuita fino al 30 giugno 2026</div>
+      <h1>Cancella i dati personali dal testo, prima di incollarlo in un'IA.</h1>
+      <p class="lead">
+        Uno strumento che lavora interamente sul tuo computer. Nessun testo viene inviato
+        a un server, nessun dato lascia il dispositivo, nessun accordo ex art. 28 GDPR da firmare.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#prova">Prova la demo nel browser</a>
+        <a class="btn btn-secondary" href="scheda-tecnica.html">Scheda tecnica</a>
+      </div>
+      <p class="cta-note">
+        L'estensione è pubblicata e revisionata dal Chrome Web Store. Funziona in Chrome e in Microsoft Edge.
+      </p>
+    </div>
+  </section>
+
+  <section class="soft">
+    <div class="wrap">
+      <h2>Il problema, in una frase</h2>
+      <p>
+        Se incolli il testo di un cliente dentro un servizio di IA senza un accordo scritto
+        ai sensi dell'art. 28 GDPR, quel testo è un trattamento di dati personali che stai
+        facendo svolgere a un terzo. Lo studio resta il titolare del trattamento.
+      </p>
+      <p>
+        La soluzione più semplice non è un contratto: è non far uscire i dati.
+        Se il testo arriva all'IA già privo dei dati personali, il problema non si pone.
+      </p>
+    </div>
+  </section>
+
+  <section id="come-funziona">
+    <div class="wrap">
+      <h2>Come funziona</h2>
+      <ol class="steps">
+        <li>
+          <h3>Selezioni il testo</h3>
+          <p>Da qualunque pagina del browser. Tasto destro &rarr; «Copia per AI (Maschera Dati)».</p>
+        </li>
+        <li>
+          <h3>Lo strumento maschera i dati</h3>
+          <p>
+            Email, telefoni, codici fiscali e partite IVA, IBAN e carte, date, documenti,
+            indirizzi, password e chiavi API, riferimenti di pratica, termini sanitari.
+            Un modello di IA locale riconosce inoltre nomi di persona, aziende e luoghi.
+          </p>
+        </li>
+        <li>
+          <h3>Controlli, correggi, copi</h3>
+          <p>
+            Il risultato si apre in una finestra modificabile: le parole sospette sono
+            evidenziate e si censurano con un clic, con Ctrl+Shift+X o su una selezione
+            qualsiasi. Ctrl+Z annulla l'ultima censura. Poi copi e incolli dove ti serve.
+          </p>
+        </li>
+      </ol>
+      <div class="box-warn">
+        <strong>Il testo non esce mai dal computer.</strong> Il modello di IA viene scaricato
+        una sola volta e resta in una cache locale. Da quel momento lo strumento funziona
+        anche senza connessione.
+      </div>
+    </div>
+  </section>
+
+  <section id="prova" class="soft">
+    <div class="wrap">
+      <h2>Provalo qui, senza installare nulla</h2>
+      <p>
+        Incolla un testo qui sotto e premi «Maschera». L'elaborazione avviene nel tuo browser:
+        questa pagina non invia nulla a nessun server.
+      </p>
+      <div class="demo-grid">
+        <div class="demo-col">
+          <label for="demo-input">Testo originale</label>
+          <textarea id="demo-input" spellcheck="false"></textarea>
+        </div>
+        <div class="demo-col">
+          <label for="demo-output">Testo mascherato</label>
+          <pre class="out" id="demo-output" aria-live="polite">Il risultato apparirà qui.</pre>
+        </div>
+      </div>
+      <div class="demo-bar">
+        <button class="btn btn-primary" type="button" id="demo-run">Maschera</button>
+        <button class="btn btn-secondary" type="button" id="demo-reset">Ripristina l'esempio</button>
+        <p class="demo-count" id="demo-count"></p>
+      </div>
+      <p class="demo-note">
+        Questa demo usa solo le regole deterministiche di riconoscimento (le stesse dell'estensione).
+        L'estensione aggiunge il modello di IA locale, che individua anche nomi propri, aziende e luoghi
+        che le regole non possono prevedere.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>Cosa fa e cosa non fa</h2>
+      <h3>Lo fa</h3>
+      <ul class="plain">
+        <li>Riconosce e sostituisce i dati strutturati con segnaposto leggibili: <code>[EMAIL]</code>, <code>[CF/PIVA]</code>, <code>[IBAN/CARTA]</code>, <code>[TELEFONO]</code>, <code>[NOME]</code>, <code>[AZIENDA]</code>, <code>[LUOGO]</code> e altri.</li>
+        <li>Verifica i caratteri di controllo di codici fiscali, partite IVA, IBAN e carte: non si limita a un controllo di forma.</li>
+        <li>Lavora interamente in locale, anche offline dopo il primo avvio.</li>
+        <li>Permette di correggere il risultato prima di copiarlo.</li>
+      </ul>
+      <h3>Non lo fa</h3>
+      <ul class="plain">
+        <li><strong>Non garantisce che ogni dato personale venga individuato.</strong> Nessuno strumento può farlo: la revisione umana resta necessaria, e lo strumento lo ricorda a ogni uso.</li>
+        <li>Non funziona dentro Word, Outlook desktop o Acrobat: agisce sul testo selezionato nel browser.</li>
+        <li>Non è certificato secondo alcuna norma: non esistono certificazioni GDPR o AI Act per strumenti di questo tipo.</li>
+        <li>Non conserva, non registra e non trasmette i testi trattati.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="soft">
+    <div class="wrap">
+      <h2>Scheda tecnica</h2>
+      <p>
+        Due pagine con architettura, flusso dei dati, connessioni di rete effettuate,
+        permessi richiesti, ruolo ai sensi del GDPR e limiti dichiarati.
+        È il documento da consegnare al proprio consulente privacy.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="scheda-tecnica.html">Apri la scheda tecnica</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="domande">
+    <div class="wrap">
+      <h2>Domande frequenti</h2>
+      <dl class="faq">
+        <dt>I testi che elaboro vengono inviati da qualche parte?</dt>
+        <dd>
+          No. L'elaborazione avviene nel browser, sul dispositivo. L'unica connessione di rete
+          è il download iniziale del modello di IA (circa 132 MB) da un archivio pubblico;
+          il modello viene poi salvato in una cache locale e lo strumento funziona offline.
+          I testi non vengono mai trasmessi.
+        </dd>
+
+        <dt>Serve nominarvi responsabili del trattamento (DPA, art. 28 GDPR)?</dt>
+        <dd>
+          No, perché non trattiamo dati personali per conto dello studio: non vi accediamo,
+          non li riceviamo e non ne determiniamo finalità o mezzi. Il ruolo di responsabile
+          presuppone un trattamento svolto per conto del titolare, che qui non esiste.
+          Il ragionamento è documentato nella scheda tecnica.
+        </dd>
+
+        <dt>Funziona con Word, Outlook o i PDF?</dt>
+        <dd>
+          No. È un'estensione del browser: agisce sul testo selezionato in una pagina web.
+          Se il documento è in Word, si copia il testo nel browser e si elabora lì.
+        </dd>
+
+        <dt>Quali browser servono?</dt>
+        <dd>Google Chrome e Microsoft Edge (versioni basate su Chromium, 116 o successive).</dd>
+
+        <dt>Riconosce davvero tutti i dati personali?</dt>
+        <dd>
+          No, e nessuno strumento può farlo. Le regole deterministiche coprono i dati
+          strutturati (email, codici fiscali, IBAN, carte, date, documenti, credenziali);
+          il modello di IA locale copre nomi, aziende e luoghi. Restano possibili
+          falsi negativi: per questo il risultato è sempre modificabile e va riletto
+          prima della copia.
+        </dd>
+
+        <dt>Cosa succede se incollo un testo con dati sanitari?</dt>
+        <dd>
+          Lo strumento riconosce alcuni termini sanitari comuni e li maschera, ma non
+          è progettato come strumento clinico. Su dati particolari (art. 9 GDPR) la
+          revisione manuale è indispensabile.
+        </dd>
+
+        <dt>Quanto costa?</dt>
+        <dd>
+          In questa fase è gratuito, senza limiti, fino al 30 giugno 2026. Non è una
+          versione di prova: è una beta, e allo scadere deciderò insieme agli utenti
+          se e come introdurre un corrispettivo. Nessun addebito automatico, nessun
+          rinnovo, nessuna carta richiesta.
+        </dd>
+
+        <dt>Si può installare su più computer dello studio?</dt>
+        <dd>Sì, su tutti i computer dello studio, senza limiti di postazioni in questa fase.</dd>
+
+        <dt>Come si disinstalla?</dt>
+        <dd>
+          Da <code>chrome://extensions</code> &rarr; Rimuovi. Non restano dati sul dispositivo
+          tranne la cache del modello, che viene eliminata con l'estensione.
+        </dd>
+
+        <dt>Chi c'è dietro?</dt>
+        <dd>
+          Una persona sola, con nome e cognome: vedi la sezione qui sotto. Il codice è pubblico
+          e verificabile, così non serve fidarsi sulla parola.
+        </dd>
+      </dl>
+    </div>
+  </section>
+
+  <section class="soft">
+    <div class="wrap">
+      <h2>Chi sono</h2>
+      <p>
+        Mi chiamo <strong>Lorenzo Franchini</strong>, studio Fisica Teorica all'Università di Pisa
+        e ho costruito questo strumento perché mi serviva: dovevo usare un'IA su testi che
+        contenevano dati di altre persone, e non volevo che quei dati uscissero dal mio computer.
+      </p>
+      <p>
+        Non è un prodotto aziendale e non c'è un team dietro. È uno strumento che uso io,
+        pubblicato perché può servire ad altri nella stessa situazione. Il codice è pubblico:
+        è verificabile che faccia quello che dichiara.
+      </p>
+      <table class="meta">
+        <tr><th>Codice sorgente</th><td><a href="https://github.com/Boszboll" rel="noopener noreferrer" target="_blank">github.com/Boszboll</a></td></tr>
+        <tr><th>Pagina dello Store</th><td><a href="https://chromewebstore.google.com/detail/moblojgamlhblckpdifjemingelgbige" rel="noopener noreferrer" target="_blank">Chrome Web Store</a></td></tr>
+        <tr><th>Informativa privacy</th><td><a href="https://boszboll.github.io/gdpr-ai-sanitizer-privacy/" rel="noopener noreferrer" target="_blank">boszboll.github.io/gdpr-ai-sanitizer-privacy</a></td></tr>
+        <tr><th>Ultimo aggiornamento</th><td>novembre 2026</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="contatti">
+    <div class="wrap">
+      <h2>Contatti</h2>
+      <p>
+        Per provarlo, per segnalare un problema o per chiedere la scheda tecnica in PDF:
+        scrivi a <a href="mailto:lorenzo.franchinilf.04@gmail.com">lorenzo.franchinilf.04@gmail.com</a>.
+      </p>
+      <p>
+        Rispondo personalmente, entro tre giorni lavorativi. Non ci sono telefonate né
+        appuntamenti: questa è una beta gestita da una persona sola.
+      </p>
+      <p class="cta-note">
+        Se lo strumento non ti serve, nessun problema: non mando email di sollecito
+        e non conservo il tuo indirizzo oltre la risposta.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <p>
+      GDPR AI-Sanitizer — boszboll.github.io/sito-professionisti · <a href="https://boszboll.github.io/gdpr-ai-sanitizer-privacy/">Informativa privacy</a> ·
+      Nessun cookie, nessun analytics, nessun tracciamento.
+    </p>
+  </div>
+</footer>
+
+<script src="sanitizer.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var ESEMPIO = [
+    "Buongiorno, in merito alla pratica il cliente Mario Rossi (CF RSSMRA85M15F205X)",
+    "chiede un aggiornamento. Il suo IBAN è IT60X0542811101000000123456 e il",
+    "telefono 333 1234567. Scrivere a mario.rossi@example.it oppure allo Studio",
+    "Bianchi & Partners. La data dell'udienza è il 15/03/2027 e la pratica n. 45187."
+  ].join("\n");
+
+  var PLACEHOLDER = /\[(?:EMAIL|TELEFONO|CF\/PIVA|IBAN\/CARTA|DATA|DOCUMENTO|PRATICA|CVV|INDIRIZZO|DATI SANITARI|SEGRETO|CHIAVE PRIVATA|NOME|AZIENDA|LUOGO|CENSURATO)\]/g;
+
+  var input = document.getElementById("demo-input");
+  var output = document.getElementById("demo-output");
+  var count = document.getElementById("demo-count");
+
+  function riempi() {
+    input.value = ESEMPIO;
+    output.textContent = "Premi «Maschera» per vedere il risultato.";
+    count.textContent = "";
+  }
+
+  function maschera() {
+    var testo = input.value;
+    output.textContent = "";
+    if (!testo.trim()) {
+      output.textContent = "Incolla un testo nella casella di sinistra.";
+      count.textContent = "";
+      return;
+    }
+    if (!window.GdprSanitizer || typeof window.GdprSanitizer.sanitize !== "function") {
+      output.textContent = "Motore di mascheratura non caricato.";
+      return;
+    }
+
+    var risultato = window.GdprSanitizer.sanitize(testo);
+    var posizione = 0;
+    var trovato;
+    PLACEHOLDER.lastIndex = 0;
+    // Il testo entra nel DOM solo con textContent: nessun innerHTML.
+    while ((trovato = PLACEHOLDER.exec(risultato.text)) !== null) {
+      output.appendChild(document.createTextNode(risultato.text.slice(posizione, trovato.index)));
+      var segnaposto = document.createElement("span");
+      segnaposto.className = "ph";
+      segnaposto.textContent = trovato[0];
+      output.appendChild(segnaposto);
+      posizione = trovato.index + trovato[0].length;
+    }
+    output.appendChild(document.createTextNode(risultato.text.slice(posizione)));
+
+    count.textContent = risultato.total === 0
+      ? "Nessun dato strutturato riconosciuto."
+      : risultato.total === 1
+        ? "1 dato sostituito."
+        : risultato.total + " dati sostituiti.";
+  }
+
+  document.getElementById("demo-run").addEventListener("click", maschera);
+  document.getElementById("demo-reset").addEventListener("click", riempi);
+  riempi();
+})();
+</script>
+
+</body>
+</html>
