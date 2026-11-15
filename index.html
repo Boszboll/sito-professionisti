@@ -167,11 +167,15 @@
         a un server, nessun dato lascia il dispositivo, nessun accordo ex art. 28 GDPR da firmare.
       </p>
       <div class="cta-row">
-        <a class="btn btn-primary" href="#prova">Prova la demo nel browser</a>
+        <a class="btn btn-primary" href="app.html">Apri lo strumento web — testo e file</a>
+        <a class="btn btn-secondary" href="#prova">Demo rapida</a>
         <a class="btn btn-secondary" href="scheda-tecnica.html">Scheda tecnica</a>
       </div>
       <p class="cta-note">
-        L'estensione è pubblicata e revisionata dal Chrome Web Store. Funziona in Chrome e in Microsoft Edge.
+        <strong>Due modi di usarlo:</strong> la web app (funziona su tutti i browser, anche con file
+        Word, Excel, CSV e PDF) e l'estensione per Chrome/Edge, che maschera il testo selezionato su
+        qualunque pagina, dal menu contestuale. L'estensione è pubblicata e revisionata dal
+        Chrome Web Store.
       </p>
     </div>
   </section>
@@ -196,8 +200,12 @@
       <h2>Come funziona</h2>
       <ol class="steps">
         <li>
-          <h3>Selezioni il testo</h3>
-          <p>Da qualunque pagina del browser. Tasto destro &rarr; «Copia per AI (Maschera Dati)».</p>
+          <h3>Selezioni il testo… o carichi un file</h3>
+          <p>
+            Con l'estensione: tasto destro &rarr; «Copia per AI (Maschera Dati)» su qualunque
+            pagina. Con la web app: incolli il testo oppure carichi un file Word, Excel, CSV
+            o PDF di testo, senza installare nulla.
+          </p>
         </li>
         <li>
           <h3>Lo strumento maschera i dati</h3>
@@ -247,9 +255,9 @@
         <p class="demo-count" id="demo-count"></p>
       </div>
       <p class="demo-note">
-        Questa demo usa solo le regole deterministiche di riconoscimento (le stesse dell'estensione).
-        L'estensione aggiunge il modello di IA locale, che individua anche nomi propri, aziende e luoghi
-        che le regole non possono prevedere.
+        Questa demo usa solo le regole deterministiche di riconoscimento.
+        <a href="app.html">La web app completa</a> aggiunge il modello di IA locale
+        (nomi, aziende e luoghi) e la lettura dei file Word, Excel, CSV e PDF.
       </p>
     </div>
   </section>
@@ -267,7 +275,8 @@
       <h3>Non lo fa</h3>
       <ul class="plain">
         <li><strong>Non garantisce che ogni dato personale venga individuato.</strong> Nessuno strumento può farlo: la revisione umana resta necessaria, e lo strumento lo ricorda a ogni uso.</li>
-        <li>Non funziona dentro Word, Outlook desktop o Acrobat: agisce sul testo selezionato nel browser.</li>
+        <li>L'estensione non agisce dentro Word o Outlook desktop; la web app legge però i file .docx, .xlsx, .csv e i PDF di testo, e restituisce il risultato come .txt, .docx, .pdf o .csv.</li>
+        <li>Non legge i PDF scannerizzati (solo immagini): il riconoscimento OCR non è ancora disponibile.</li>
         <li>Non è certificato secondo alcuna norma: non esistono certificazioni GDPR o AI Act per strumenti di questo tipo.</li>
         <li>Non conserva, non registra e non trasmette i testi trattati.</li>
       </ul>
@@ -310,8 +319,10 @@
 
         <dt>Funziona con Word, Outlook o i PDF?</dt>
         <dd>
-          No. È un'estensione del browser: agisce sul testo selezionato in una pagina web.
-          Se il documento è in Word, si copia il testo nel browser e si elabora lì.
+          L'estensione agisce sul testo selezionato nel browser. La web app legge direttamente
+          i file: .docx e .xlsx (testo estratto sul computer), .csv e i PDF di testo. Il risultato
+          si scarica come .txt, .docx, .pdf o .csv. I PDF scannerizzati (immagini) non sono ancora
+          supportati: il riconoscimento OCR arriverà in una versione successiva.
         </dd>
 
         <dt>Quali browser servono?</dt>
@@ -331,6 +342,17 @@
           Lo strumento riconosce alcuni termini sanitari comuni e li maschera, ma non
           è progettato come strumento clinico. Su dati particolari (art. 9 GDPR) la
           revisione manuale è indispensabile.
+        </dd>
+
+        <dt>Come posso verificare che non invii nulla da nessuna parte?</dt>
+        <dd>
+          In due modi, entrambi senza fidarsi sulla parola. Il più semplice: apri la web app
+          una volta con la connessione, poi attiva la modalità aereo e usala di nuovo:
+          funziona lo stesso, quindi non può comunicare con alcun server. Il più rigoroso:
+          apri la scheda Rete (Network) degli strumenti di sviluppo del browser e ripeti
+          l'operazione: l'unica richiesta esterna è il download del modello AI. In fondo
+          alla web app c'è anche un riepilogo delle richieste della sessione, aggiornato
+          in diretta.
         </dd>
 
         <dt>Quanto costa?</dt>

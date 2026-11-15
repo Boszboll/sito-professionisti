@@ -82,9 +82,15 @@
   destinazione esterna.
 </p>
 <p>
-  L'elaborazione avviene <strong>interamente sul dispositivo dell'utente</strong>. L'estensione
-  non dispone di server applicativi, non invia i testi a terzi e non conserva copia di quanto
-  elaborato.
+  Oltre all'estensione esiste una <strong>versione web</strong> (la pagina «strumento web» del
+  sito) con le stesse caratteristiche: accetta testo incollato o file .txt, .csv, .docx, .xlsx
+  e PDF di testo, estrae il contenuto nel browser e restituisce il risultato come .txt, .csv,
+  .docx o .pdf. Anche l'estrazione del testo dai file avviene interamente sul dispositivo.
+</p>
+<p>
+  L'elaborazione avviene <strong>interamente sul dispositivo dell'utente</strong>. Né
+  l'estensione né la versione web dispongono di server applicativi, non inviano i testi a
+  terzi e non conservano copia di quanto elaborato.
 </p>
 
 <h2>2. Flusso dei dati</h2>
@@ -229,7 +235,7 @@ copia negli appunti → incolla dove serve
 <h2>10. Versioni e integrità</h2>
 <table class="nobreak">
   <tr><th>Versione</th><td>1.1.0 beta</td></tr>
-  <tr><th>Distribuzione</th><td>Chrome Web Store (pacchetto firmato e revisionato da Google); disponibile anche per Microsoft Edge</td></tr>
+  <tr><th>Distribuzione</th><td>Chrome Web Store (pacchetto firmato e revisionato da Google), disponibile anche per Microsoft Edge; versione web su questo sito, senza installazione</td></tr>
   <tr><th>Codice sorgente</th><td>non distribuito pubblicamente; disponibile su richiesta per la verifica tecnica del consulente privacy/DPO dello studio</td></tr>
   <tr><th>Modello di IA</th><td><code>Xenova/distilbert-base-multilingual-cased-ner-hrl</code>, quantizzato q8, licenza AFL-3.0 (attribuzione inclusa nel pacchetto)</td></tr>
   <tr><th>Requisiti</th><td>Chrome o Edge versione 116 o successive</td></tr>
