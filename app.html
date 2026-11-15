@@ -70,25 +70,34 @@
   <section class="panel" id="risultato" hidden>
     <h2>Risultato — controllalo prima di usarlo</h2>
     <p class="summary" id="riepilogo"></p>
-    <div class="editor" id="editor" contenteditable="true" spellcheck="false"
-         role="textbox" aria-multiline="true" aria-label="Testo anonimizzato"></div>
-    <p class="guida">
-      Le parole evidenziate sono suggerimenti: fai clic su una parola per censurarla, oppure
-      seleziona una parte di testo e usa «Censura selezione» o Ctrl+Shift+X. Ctrl+Z annulla
-      l'ultima censura.
-    </p>
-    <p class="warning" id="nota-ai"></p>
 
-    <div class="row-actions">
-      <button class="btn" type="button" id="censura-selezione" disabled>Censura selezione</button>
-      <button class="btn" type="button" id="annulla-censura" disabled>↶ Annulla censura</button>
+    <div id="editor-zone">
+      <div class="editor" id="editor" contenteditable="true" spellcheck="false"
+           role="textbox" aria-multiline="true" aria-label="Testo anonimizzato"></div>
+      <p class="guida">
+        Le parole evidenziate sono suggerimenti: fai clic su una parola per censurarla, oppure
+        seleziona una parte di testo e usa «Censura selezione» o Ctrl+Shift+X. Ctrl+Z annulla
+        l'ultima censura.
+      </p>
+      <div class="row-actions">
+        <button class="btn" type="button" id="censura-selezione" disabled>Censura selezione</button>
+        <button class="btn" type="button" id="annulla-censura" disabled>↶ Annulla censura</button>
+      </div>
     </div>
+
+    <div id="tabella" hidden>
+      <p class="tabella-note" id="tabella-note"></p>
+      <div class="tabella-wrap" id="tabella-preview"></div>
+    </div>
+
+    <p class="warning" id="nota-ai"></p>
 
     <div class="export">
       <h3>Scarica il risultato</h3>
       <div class="row-actions">
         <button class="btn" type="button" data-export="txt">.txt</button>
         <button class="btn" type="button" data-export="csv">.csv</button>
+        <button class="btn" type="button" data-export="xlsx">.xlsx</button>
         <button class="btn" type="button" data-export="docx">.docx</button>
         <button class="btn" type="button" data-export="pdf">.pdf</button>
       </div>

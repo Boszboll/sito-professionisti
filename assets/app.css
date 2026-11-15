@@ -113,6 +113,11 @@ textarea:focus { outline: 2px solid rgba(29, 78, 216, 0.35); border-color: var(-
 .bolla:hover { background: #1f2937; }
 
 .guida { font-size: 13.5px; color: var(--ink-soft); margin: 10px 0 0; }
+
+.tabella-note { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 10px; }
+.tabella-wrap { max-height: 50vh; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+.tabella-wrap table { border-collapse: collapse; width: 100%; font-size: 12.5px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.tabella-wrap td { border: 1px solid var(--line); padding: 5px 8px; vertical-align: top; white-space: pre-wrap; overflow-wrap: anywhere; }
 .warning {
   margin: 10px 0 0; padding: 10px 12px; border-radius: 10px;
   background: var(--warn-bg); border: 1px solid var(--warn-line);
