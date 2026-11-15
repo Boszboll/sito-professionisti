@@ -1,0 +1,140 @@
+<!doctype html>
+<!--
+  GDPR AI-Sanitizer — Web App
+  Tutta l'elaborazione avviene nel browser: nessun testo e nessun file lascia
+  il computer. Costruita da src/web/app.js tramite `npm run webapp:build`.
+-->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GDPR AI-Sanitizer — Anonimizza testo e file nel browser</title>
+<meta name="description" content="Anonimizza testi, Word, Excel e PDF nel browser: i dati personali vengono mascherati sul computer, niente viene inviato a nessun server.">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="index.html">GDPR <span>AI-Sanitizer</span></a>
+    <nav>
+      <a href="index.html">Presentazione</a>
+      <a href="scheda-tecnica.html">Scheda tecnica</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="intro">
+    <h1>Anonimizza testo e documenti nel browser</h1>
+    <p class="lead">
+      Incolla il testo oppure carica un file Word, Excel, CSV o PDF: i dati personali
+      vengono mascherati <strong>sul tuo computer</strong> e puoi riscaricare il risultato
+      come .txt, .docx, .pdf o .csv. Nessun file lascia il dispositivo.
+    </p>
+  </section>
+
+  <section class="panel">
+    <div class="row-actions">
+      <label class="ai-toggle">
+        <input type="checkbox" id="usa-ai" checked>
+        Riconoscimento AI locale di nomi, aziende e luoghi
+      </label>
+      <span class="file-hint">Formati accettati: .txt .docx .xlsx .csv .pdf (testo)</span>
+    </div>
+
+    <label class="sr-only" for="input-testo">Testo da anonimizzare</label>
+    <textarea id="input-testo" placeholder="Incolla qui il testo da anonimizzare…" spellcheck="false"></textarea>
+
+    <div class="drop" id="drop">
+      <p>…oppure trascina qui un file, o</p>
+      <button class="btn" type="button" id="scegli-file">Scegli file</button>
+      <input type="file" id="file" accept=".txt,.md,.csv,.docx,.xlsx,.pdf" hidden>
+      <p class="file-name" id="file-nome"></p>
+    </div>
+
+    <div class="progress" id="progresso" hidden>
+      <p id="progresso-testo">Preparazione dell'AI locale…</p>
+      <progress id="progresso-barra" max="100" value="0"></progress>
+    </div>
+
+    <div class="row-actions">
+      <button class="btn btn-primary" type="button" id="maschera">Maschera i dati</button>
+      <button class="btn" type="button" id="annulla-ai" hidden>Annulla AI</button>
+    </div>
+  </section>
+
+  <section class="panel" id="risultato" hidden>
+    <h2>Risultato — controllalo prima di usarlo</h2>
+    <p class="summary" id="riepilogo"></p>
+    <div class="editor" id="editor" contenteditable="true" spellcheck="false"
+         role="textbox" aria-multiline="true" aria-label="Testo anonimizzato"></div>
+    <p class="guida">
+      Le parole evidenziate sono suggerimenti: fai clic su una parola per censurarla, oppure
+      seleziona una parte di testo e usa «Censura selezione» o Ctrl+Shift+X. Ctrl+Z annulla
+      l'ultima censura.
+    </p>
+    <p class="warning" id="nota-ai"></p>
+
+    <div class="row-actions">
+      <button class="btn" type="button" id="censura-selezione" disabled>Censura selezione</button>
+      <button class="btn" type="button" id="annulla-censura" disabled>↶ Annulla censura</button>
+    </div>
+
+    <div class="export">
+      <h3>Scarica il risultato</h3>
+      <div class="row-actions">
+        <button class="btn" type="button" data-export="txt">.txt</button>
+        <button class="btn" type="button" data-export="csv">.csv</button>
+        <button class="btn" type="button" data-export="docx">.docx</button>
+        <button class="btn" type="button" data-export="pdf">.pdf</button>
+      </div>
+      <p class="file-note">I file generati vengono creati nel browser e non toccano nessun server.</p>
+    </div>
+  </section>
+
+  <section class="notes">
+    <p>
+      ⚠️ Nessuno strumento automatico individua tutti i dati personali: rileggi sempre il
+      risultato prima di usarlo. L'elaborazione (estrazione del testo inclusa) avviene
+      interamente sul dispositivo; l'unica connessione di rete è il download del modello AI,
+      una sola volta. Per i dettagli: <a href="scheda-tecnica.html">scheda tecnica</a>.
+    </p>
+
+    <details class="rete" id="rete">
+      <summary>🔍 Trasparenza di rete — le richieste fatte da questa pagina in questa sessione</summary>
+      <p class="rete-riepilogo" id="rete-riepilogo">Nessuna richiesta registrata finora.</p>
+      <ul class="rete-lista" id="rete-lista"></ul>
+      <p class="rete-note">
+        Elenco letto direttamente dalle API del browser: mostra ciò che la pagina ha davvero
+        scaricato da quando è stata aperta. L'unica destinazione esterna possibile è
+        huggingface.co, e solo per i file del modello AI.
+      </p>
+    </details>
+
+    <p class="prova-offline">
+      <strong>La prova più semplice:</strong> apri questa pagina una volta con la connessione
+      (il browser salva l'app e, se usi l'AI, il modello), poi attiva la modalità aereo e
+      usala di nuovo: funziona lo stesso. Se funziona senza connessione, non può star
+      inviando nulla a nessun server.
+    </p>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>
+      GDPR AI-Sanitizer — <a href="index.html">presentazione</a> ·
+      <a href="https://boszboll.github.io/gdpr-ai-sanitizer-privacy/">Informativa privacy</a> ·
+      Nessun cookie, nessun analytics, nessun tracciamento.
+    </p>
+  </div>
+</footer>
+
+<script src="assets/app.js" defer></script>
+</body>
+</html>
