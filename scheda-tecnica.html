@@ -71,7 +71,7 @@
 <h1>GDPR AI-Sanitizer — Scheda tecnica</h1>
 <p class="sub">
   Descrizione dell'architettura, del flusso dei dati e del ruolo ai sensi del Regolamento (UE) 2016/679.<br>
-  Versione descritta: 1.1.0 beta · Revisione: novembre 2026 · Documento di Lorenzo Franchini — boszboll.github.io/sito-professionisti
+  Versione descritta: 1.2.0 · Revisione: novembre 2026 · Documento di Lorenzo Franchini — boszboll.github.io/sito-professionisti
 </p>
 
 <h2>1. Che cos'è</h2>
@@ -85,7 +85,12 @@
   Oltre all'estensione esiste una <strong>versione web</strong> (la pagina «strumento web» del
   sito) con le stesse caratteristiche: accetta testo incollato o file .txt, .csv, .docx, .xlsx
   e PDF di testo, estrae il contenuto nel browser e restituisce il risultato come .txt, .csv,
-  .docx o .pdf. Anche l'estrazione del testo dai file avviene interamente sul dispositivo.
+  .xlsx, .docx o .pdf. Anche l'estrazione del testo dai file avviene interamente sul dispositivo.
+</p>
+<p>
+  Sui file tabellari (CSV ed Excel) la struttura viene conservata: ogni cella è elaborata
+  separatamente e il file scaricato mantiene fogli, righe e colonne originali. I valori che non
+  sono dati personali (importi, quantità, date non riconducibili a una persona) restano intatti.
 </p>
 <p>
   L'elaborazione avviene <strong>interamente sul dispositivo dell'utente</strong>. Né
@@ -94,29 +99,26 @@
 </p>
 
 <h2>2. Flusso dei dati</h2>
-<div class="flow">UTENTE                          DISPOSITIVO DELL'UTENTE                      ESTERNO
-──────                          ───────────────────────                      ───────
-seleziona il testo
-  │
-  ├─ tasto destro → "Copia per AI (Maschera Dati)"
-  │
-  ▼
-estensione attiva
-  │
-  ├─ regole deterministiche (email, CF/P.IVA, IBAN, carte,
-  │  telefoni, date, documenti, credenziali, indirizzi...)
-  │
-  ├─ modello di IA locale (nomi, aziende, luoghi)
-  │     └─ file del modello già in cache IndexedDB
-  │
-  ▼
-finestra di revisione (testo modificabile)
-  │
-  ├─ l'utente corregge, censura, rilegge
-  │
-  ▼
-copia negli appunti → incolla dove serve
-                                    nessun testo esce dal dispositivo in nessun punto</div>
+<div class="flow">UTENTE                     DISPOSITIVO DELL'UTENTE                       ESTERNO
+──────                     ───────────────────────                       ───────
+ESTENSIONE                                    VERSIONE WEB
+seleziona il testo                            apre la pagina / carica un file
+  │                                             │  (.txt .csv .docx .xlsx .pdf)
+  ├─ tasto destro                               ├─ estrazione del testo nel browser
+  │  "Copia per AI (Maschera Dati)"             │
+  ▼                                             ▼
+                stesse regole deterministiche (email, CF/P.IVA, IBAN,
+                carte, telefoni, date, documenti, credenziali, indirizzi,
+                cognomi noti...)
+                              │
+                              ├─ modello di IA locale (nomi, aziende, luoghi)
+                              │     └─ file del modello già in cache IndexedDB
+                              ▼
+                revisione (testo modificabile, censura, annulla)
+                              │
+                              ├─ estensione: copia negli appunti
+                              └─ versione web: download .txt .csv .xlsx .docx .pdf
+                                    nessun contenuto esce dal dispositivo in nessun punto</div>
 <p>
   L'unica comunicazione in uscita è il <strong>download iniziale dei file del modello di IA</strong>,
   effettuato una sola volta al primo utilizzo dell'analisi AI e relativo a un archivio pubblico di
@@ -128,18 +130,24 @@ copia negli appunti → incolla dove serve
   <tr><th>Destinazione</th><th>Quando</th><th>Contenuto trasmesso</th></tr>
   <tr>
     <td><code>huggingface.co</code></td>
-    <td>Solo al primo uso dell'analisi AI, e solo se il modello non è già in cache</td>
+    <td>Solo al primo uso dell'analisi AI, e solo se il modello non è già in cache (estensione e versione web)</td>
     <td>Richiesta GET dei file pubblici del modello. Nessun dato dell'utente.</td>
+  </tr>
+  <tr>
+    <td>Hosting statico della versione web</td>
+    <td>All'apertura della pagina e al primo caricamento di ciascuna risorsa</td>
+    <td>La richiesta della pagina e dei suoi file. Come qualsiasi sito web, l'host riceve indirizzo IP, data, ora e dati tecnici della richiesta; <strong>nessun contenuto elaborato dall'utente</strong>.</td>
   </tr>
 </table>
 <p>
   Non esistono altre connessioni: nessun servizio di analytics, nessun sistema di tracciamento,
   nessun invio di telemetria, nessuna pubblicità. Le richieste di rete sono vincolate da un
   elenco esplicito di file ammessi: qualunque richiesta verso altri indirizzi viene bloccata
-  dal codice.
+  dal codice. I file dell'applicazione sono serviti dallo stesso dominio della pagina e non da
+  CDN di terze parti; il service worker serve solo a riaprire la pagina senza connessione.
 </p>
 
-<h2>4. Permessi richiesti e motivazione</h2>
+<h2>4. Permessi richiesti e motivazione — estensione</h2>
 <table class="nobreak">
   <tr><th>Permesso</th><th>Perché è necessario</th></tr>
   <tr><td><code>activeTab</code></td><td>Accedere alla scheda attiva solo nel momento in cui l'utente sceglie la voce di menu. Nessun accesso permanente alle pagine navigate.</td></tr>
@@ -150,15 +158,37 @@ copia negli appunti → incolla dove serve
   <tr><td>Accesso host a <code>huggingface.co</code></td><td>Scaricare i file pubblici del modello. È l'unico accesso host dichiarato.</td></tr>
 </table>
 
+<h2>4-bis. Versione web — autorizzazioni del browser</h2>
+<p>
+  La versione web non richiede alcuna autorizzazione: è una pagina come le altre e non
+  installa estensioni. Le uniche capacità usate sono quelle standard del browser e tutte
+  restano <strong>sul dispositivo</strong>:
+</p>
+<table class="nobreak">
+  <tr><th>Capacità</th><th>Perché è necessaria</th></tr>
+  <tr><td><code>IndexedDB</code></td><td>Conservare i file pubblici del modello di IA, così il download avviene una sola volta.</td></tr>
+  <tr><td><code>Cache Storage</code> + service worker</td><td>Permettere l'uso della pagina anche senza connessione dopo la prima visita: è la prova che nessun server elabora i dati.</td></tr>
+  <tr><td>Lettura file (input locale)</td><td>Estrarre il testo da .txt, .csv, .docx, .xlsx e PDF di testo. L'estrazione avviene in memoria nella scheda.</td></tr>
+  <tr><td>Download di file generati</td><td>Salvare il risultato come .txt, .csv, .xlsx, .docx o .pdf, creato nel browser.</td></tr>
+</table>
+<p>
+  Nessun accesso alla posizione, alla fotocamera, al microfono, agli appunti in background,
+  alle altre schede o alla cronologia.
+</p>
+
 <h2>5. Dati conservati sul dispositivo</h2>
 <table class="nobreak">
   <tr><th>Dato</th><th>Dove</th><th>Contenuto</th></tr>
-  <tr><td>Cache del modello</td><td>IndexedDB dell'estensione</td><td>File pubblici del modello di IA. Nessun dato dell'utente.</td></tr>
-  <tr><td>Preferenze e contatore d'uso</td><td><code>chrome.storage.local</code></td><td>Data corrente e numero di utilizzi giornalieri. Nessun testo.</td></tr>
+  <tr><td>Cache del modello (estensione)</td><td>IndexedDB dell'estensione</td><td>File pubblici del modello di IA. Nessun dato dell'utente.</td></tr>
+  <tr><td>Preferenze e contatore d'uso (estensione)</td><td><code>chrome.storage.local</code></td><td>Data corrente e numero di utilizzi giornalieri. Nessun testo.</td></tr>
+  <tr><td>Cache del modello (versione web)</td><td>IndexedDB della pagina</td><td>File pubblici del modello di IA. Nessun dato dell'utente.</td></tr>
+  <tr><td>File dell'applicazione (versione web)</td><td>Cache Storage del service worker</td><td>Solo HTML, CSS e codice della pagina, per l'uso offline. Nessun contenuto dell'utente.</td></tr>
 </table>
 <p>
-  <strong>I testi elaborati non vengono mai salvati</strong>, né su disco né in alcun registro,
-  e non sono accessibili a terzi. La rimozione dell'estensione elimina tutto quanto sopra.
+  <strong>I testi e i file elaborati non vengono mai salvati</strong>, né su disco né in alcun
+  registro, e non sono accessibili a terzi. La rimozione dell'estensione elimina i primi due
+  dati; per la versione web basta svuotare i dati del sito. I file importati vengono letti in
+  memoria e non vengono copiati altrove.
 </p>
 
 <h2>6. Ruolo ai sensi del GDPR</h2>
@@ -203,7 +233,9 @@ copia negli appunti → incolla dove serve
   <li><strong>Nessuna esecuzione di codice remoto</strong>: la Content Security Policy dell'estensione consente solo codice incluso nel pacchetto.</li>
   <li><strong>Nessun uso di <code>innerHTML</code></strong>: il testo dell'utente entra nel DOM esclusivamente come testo, quindi non può essere interpretato come markup o codice.</li>
   <li><strong>Nessuna registrazione dei contenuti</strong>: i testi non sono scritti nella console né in alcun archivio.</li>
-  <li><strong>Rilascio della memoria</strong>: il modello viene scaricato dalla memoria dopo cinque minuti di inattività.</li>
+  <li><strong>Rilascio della memoria</strong>: il modello viene rilasciato dopo cinque minuti di inattività, sia dall'estensione sia dalla versione web, e ricaricato dalla cache locale al bisogno senza nuovi download.</li>
+  <li><strong>Nessuna esecuzione di codice remoto</strong> (versione web): la Content Security Policy della pagina consente solo codice dello stesso sito; nessun CDN, nessun font esterno, nessuno script di terze parti.</li>
+  <li><strong>Service worker solo per il funzionamento offline</strong>: intercetta esclusivamente le risorse della pagina; le richieste verso altri domini, compreso il modello, non vengono toccate.</li>
 </ul>
 
 <h2>8. Limiti dichiarati</h2>
