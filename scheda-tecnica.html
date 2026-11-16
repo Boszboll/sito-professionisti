@@ -249,7 +249,7 @@ seleziona il testo                            apre la pagina / carica un file
   <li><strong>Nessun uso di <code>innerHTML</code></strong>: il testo dell'utente entra nel DOM esclusivamente come testo, quindi non può essere interpretato come markup o codice.</li>
   <li><strong>Nessuna registrazione dei contenuti</strong>: i testi non sono scritti nella console né in alcun archivio.</li>
   <li><strong>Rilascio della memoria</strong>: il modello viene rilasciato dopo cinque minuti di inattività, sia dall'estensione sia dalla versione web, e ricaricato dalla cache locale al bisogno senza nuovi download.</li>
-  <li><strong>Nessuna esecuzione di codice remoto</strong> (versione web): la Content Security Policy della pagina consente solo codice dello stesso sito; nessun CDN, nessun font esterno, nessuno script di terze parti.</li>
+  <li><strong>Nessun codice di terze parti</strong> (versione web): tutte le librerie sono incluse nel sito e servite dallo stesso dominio; non ci sono CDN, font esterni, script pubblicitari o di analisi. Le richieste di rete in uscita sono vincolate da un elenco esplicito di file ammessi: qualsiasi altra destinazione viene rifiutata dal codice prima della richiesta.</li>
   <li><strong>Service worker solo per il funzionamento offline</strong>: intercetta esclusivamente le risorse della pagina; le richieste verso altri domini, compreso il modello, non vengono toccate.</li>
 </ul>
 
@@ -287,7 +287,7 @@ seleziona il testo                            apre la pagina / carica un file
   <tr><th>Distribuzione</th><td>Chrome Web Store (pacchetto firmato e revisionato da Google), disponibile anche per Microsoft Edge; versione web su questo sito, senza installazione</td></tr>
   <tr><th>Codice sorgente</th><td>non distribuito pubblicamente; disponibile su richiesta per la verifica tecnica del consulente privacy/DPO dello studio</td></tr>
   <tr><th>Modello di IA</th><td><code>Xenova/distilbert-base-multilingual-cased-ner-hrl</code>, quantizzato q8, licenza AFL-3.0 (attribuzione inclusa nel pacchetto)</td></tr>
-  <tr><th>Requisiti</th><td>Chrome o Edge versione 116 o successive</td></tr>
+  <tr><th>Requisiti</th><td>Estensione: Chrome o Edge 116 o successive. Versione web: qualsiasi browser recente (Chrome, Edge, Firefox, Safari).</td></tr>
 </table>
 
 <h2>11. Contatti</h2>

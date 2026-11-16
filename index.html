@@ -204,7 +204,7 @@
           <p>
             Con l'estensione: tasto destro &rarr; «Copia per AI (Maschera Dati)» su qualunque
             pagina. Con la web app: incolli il testo oppure carichi un file Word, Excel, CSV
-            o PDF di testo, senza installare nulla.
+            o PDF (anche scannerizzato), senza installare nulla.
           </p>
         </li>
         <li>
@@ -322,13 +322,18 @@
         <dt>Funziona con Word, Outlook o i PDF?</dt>
         <dd>
           L'estensione agisce sul testo selezionato nel browser. La web app legge direttamente
-          i file: .docx e .xlsx (testo estratto sul computer), .csv e i PDF di testo. Il risultato
-          si scarica come .txt, .docx, .pdf o .csv. I PDF scannerizzati (immagini) non sono ancora
-          supportati: il riconoscimento OCR arriverà in una versione successiva.
+          i file: .docx, .xlsx, .csv e PDF, e restituisce il risultato nello stesso formato
+          (.txt, .csv, .xlsx, .docx o .pdf). Su CSV ed Excel la struttura di righe, colonne e
+          fogli resta quella originale. Anche i PDF composti solo da immagini si possono
+          leggere: c'è un OCR italiano e inglese che gira sul computer dell'utente. Non legge
+          però manoscritti né scansioni molto degradate.
         </dd>
 
         <dt>Quali browser servono?</dt>
-        <dd>Google Chrome e Microsoft Edge (versioni basate su Chromium, 116 o successive).</dd>
+        <dd>
+          Per l'estensione: Chrome o Edge (Chromium 116 o successive). La web app funziona su
+          qualunque browser recente, anche Firefox e Safari.
+        </dd>
 
         <dt>Riconosce davvero tutti i dati personali?</dt>
         <dd>
@@ -359,13 +364,13 @@
 
         <dt>Quanto costa?</dt>
         <dd>
-          L'estensione ha 5 utilizzi gratuiti al giorno. Chi partecipa alla beta può chiedere
-          lo sblocco illimitato gratuitamente: basta una email e si riceve il codice da inserire
-          nel popup dell'estensione. L'unica cosa che chiedo ai partecipanti è un breve feedback
-          dopo qualche settimana d'uso. La beta è gratuita fino al 30 giugno 2027. Nessun
-          addebito automatico, nessun rinnovo, nessuna carta richiesta: se in futuro introdurrò
-          un corrispettivo, lo comunicherò per tempo e nessuno si troverà un addebito senza
-          averlo scelto.
+          Durante la beta è tutto gratuito. L'estensione installata dal Chrome Web Store ha
+          5 utilizzi gratuiti al giorno; chi partecipa alla beta può chiedere lo sblocco
+          illimitato gratuitamente: basta un messaggio e si riceve il codice da inserire nel
+          popup dell'estensione. La <strong>versione web</strong> invece non ha contatori né
+          limiti: se un giorno metterò un prezzo, lo dirò prima e nessuno si troverà un
+          addebito senza averlo scelto. L'unica cosa che chiedo a chi la usa davvero è un breve
+          feedback dopo qualche settimana. La beta è gratuita fino al 30 giugno 2027.
         </dd>
 
         <dt>Si può installare su più computer dello studio?</dt>
