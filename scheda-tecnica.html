@@ -9,7 +9,7 @@
     lorenzo.franchinilf.04@gmail.com       indirizzo di contatto (dominio proprio)
     boszboll.github.io/sito-professionisti     dominio del sito
     novembre 2026   mese e anno di revisione
-    1.1.0 beta    versione dell'estensione descritta (es. 1.1.0)
+    1.2.0    versione dell'estensione descritta (es. 1.2.0)
 -->
 <html lang="it">
 <head>
@@ -84,13 +84,21 @@
 <p>
   Oltre all'estensione esiste una <strong>versione web</strong> (la pagina «strumento web» del
   sito) con le stesse caratteristiche: accetta testo incollato o file .txt, .csv, .docx, .xlsx
-  e PDF di testo, estrae il contenuto nel browser e restituisce il risultato come .txt, .csv,
+  e PDF, estrae il contenuto nel browser e restituisce il risultato come .txt, .csv,
   .xlsx, .docx o .pdf. Anche l'estrazione del testo dai file avviene interamente sul dispositivo.
 </p>
 <p>
   Sui file tabellari (CSV ed Excel) la struttura viene conservata: ogni cella è elaborata
   separatamente e il file scaricato mantiene fogli, righe e colonne originali. I valori che non
   sono dati personali (importi, quantità, date non riconducibili a una persona) restano intatti.
+  Se il file ha più fogli, l'esportazione .csv produce un archivio ZIP con un file per foglio,
+  così nessuna colonna va persa; in alternativa si esporta in .xlsx con tutti i fogli.
+</p>
+<p>
+  I PDF che non contengono testo (le scansioni) possono essere letti con un <strong>OCR</strong>
+  integrato (motore Tesseract, italiano e inglese). Il motore e i dati di lingua sono ospitati
+  insieme alla pagina e l'esecuzione avviene sul dispositivo; i circa 9 MB necessari vengono
+  scaricati solo se l'utente preme quel pulsante, e restano poi nella cache del browser.
 </p>
 <p>
   L'elaborazione avviene <strong>interamente sul dispositivo dell'utente</strong>. Né
@@ -135,8 +143,8 @@ seleziona il testo                            apre la pagina / carica un file
   </tr>
   <tr>
     <td>Hosting statico della versione web</td>
-    <td>All'apertura della pagina e al primo caricamento di ciascuna risorsa</td>
-    <td>La richiesta della pagina e dei suoi file. Come qualsiasi sito web, l'host riceve indirizzo IP, data, ora e dati tecnici della richiesta; <strong>nessun contenuto elaborato dall'utente</strong>.</td>
+    <td>All'apertura della pagina e, se l'utente usa quella funzione, al primo caricamento del motore OCR o delle librerie per i file</td>
+    <td>La richiesta della pagina e dei suoi file (codice, motore OCR, dati di lingua, font). Come qualsiasi sito web, l'host riceve indirizzo IP, data, ora e dati tecnici della richiesta; <strong>nessun contenuto elaborato dall'utente</strong>.</td>
   </tr>
 </table>
 <p>
@@ -168,12 +176,19 @@ seleziona il testo                            apre la pagina / carica un file
   <tr><th>Capacità</th><th>Perché è necessaria</th></tr>
   <tr><td><code>IndexedDB</code></td><td>Conservare i file pubblici del modello di IA, così il download avviene una sola volta.</td></tr>
   <tr><td><code>Cache Storage</code> + service worker</td><td>Permettere l'uso della pagina anche senza connessione dopo la prima visita: è la prova che nessun server elabora i dati.</td></tr>
-  <tr><td>Lettura file (input locale)</td><td>Estrarre il testo da .txt, .csv, .docx, .xlsx e PDF di testo. L'estrazione avviene in memoria nella scheda.</td></tr>
+  <tr><td>Lettura file (input locale)</td><td>Estrarre il testo da .txt, .csv, .docx, .xlsx e PDF. L'estrazione avviene in memoria nella scheda.</td></tr>
   <tr><td>Download di file generati</td><td>Salvare il risultato come .txt, .csv, .xlsx, .docx o .pdf, creato nel browser.</td></tr>
+  <tr><td>Worker + WebAssembly (OCR, AI, PDF)</td><td>Eseguire motore OCR, modello di IA e lettura PDF in un contesto separato, senza congelare la pagina. Nessun dato esce dal dispositivo.</td></tr>
 </table>
 <p>
   Nessun accesso alla posizione, alla fotocamera, al microfono, agli appunti in background,
   alle altre schede o alla cronologia.
+</p>
+<p>
+  <strong>Peso del primo caricamento.</strong> La pagina si apre con circa 50 KB di codice
+  (interfaccia e regole di mascheratura). Le librerie pesanti — lettura/scrittura Office e PDF,
+  modello di IA, motore OCR — sono in moduli separati che il browser scarica <em>solo quando
+  servono</em>: chi incolla un testo e lo riscarica non le scarica affatto.
 </p>
 
 <h2>5. Dati conservati sul dispositivo</h2>
@@ -244,6 +259,8 @@ seleziona il testo                            apre la pagina / carica un file
     <li><strong>Nessuno strumento automatico individua tutti i dati personali.</strong> Restano possibili falsi negativi, in particolare su nomi rari, soprannomi, riferimenti indiretti e dati deducibili dal contesto.</li>
     <li>La revisione umana del testo prodotto è <strong>necessaria</strong> e l'estensione la richiede esplicitamente prima di ogni copia.</li>
     <li>L'estensione opera sul testo selezionato nel browser: <strong>non interviene</strong> su applicazioni desktop (Word, Outlook, Acrobat) né su file allegati.</li>
+    <li><strong>PDF in uscita</strong>: il testo viene riscritto in pagine A4, quindi un PDF impaginato in modo complesso non torna identico all'originale. I caratteri latini, greci e cirillici sono conservati; ideogrammi e altre scritture non latine non sono rappresentabili e restano esclusi.</li>
+    <li><strong>OCR</strong>: funziona su scansioni leggibili, non su manoscritti, fax molto degradati o tabelle fitte. Il testo riconosciuto va riletto: l'OCR confonde cifre simili (0/O, 1/l, 5/S).</li>
     <li>Non costituisce strumento clinico né è progettata per il trattamento di categorie particolari di dati (art. 9 GDPR) senza adeguata valutazione autonoma del titolare.</li>
     <li><strong>Non esiste alcuna certificazione</strong> GDPR o AI Act per strumenti di questa natura: il presente documento è descrittivo e non sostituisce la valutazione del titolare o del suo consulente.</li>
   </ul>
@@ -266,7 +283,7 @@ seleziona il testo                            apre la pagina / carica un file
 
 <h2>10. Versioni e integrità</h2>
 <table class="nobreak">
-  <tr><th>Versione</th><td>1.1.0 beta</td></tr>
+  <tr><th>Versione</th><td>1.2.0 (versione web: aggiornamento continuo, allineata alla stessa base di regole)</td></tr>
   <tr><th>Distribuzione</th><td>Chrome Web Store (pacchetto firmato e revisionato da Google), disponibile anche per Microsoft Edge; versione web su questo sito, senza installazione</td></tr>
   <tr><th>Codice sorgente</th><td>non distribuito pubblicamente; disponibile su richiesta per la verifica tecnica del consulente privacy/DPO dello studio</td></tr>
   <tr><th>Modello di IA</th><td><code>Xenova/distilbert-base-multilingual-cased-ner-hrl</code>, quantizzato q8, licenza AFL-3.0 (attribuzione inclusa nel pacchetto)</td></tr>

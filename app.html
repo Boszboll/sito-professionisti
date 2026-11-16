@@ -43,7 +43,11 @@
         <input type="checkbox" id="usa-ai" checked>
         Riconoscimento AI locale di nomi, aziende e luoghi
       </label>
-      <span class="file-hint">Formati accettati: .txt .docx .xlsx .csv .pdf (testo)</span>
+      <label class="ai-toggle">
+        <input type="checkbox" id="cognomi-ambigui">
+        Censura anche i cognomi ambigui in maiuscolo (ROSSI, BIANCHI…)
+      </label>
+      <span class="file-hint">Formati accettati: .txt .docx .xlsx .csv .pdf (testo o scansionato)</span>
     </div>
 
     <label class="sr-only" for="input-testo">Testo da anonimizzare</label>
@@ -54,6 +58,8 @@
       <button class="btn" type="button" id="scegli-file">Scegli file</button>
       <input type="file" id="file" accept=".txt,.md,.csv,.docx,.xlsx,.pdf" hidden>
       <p class="file-name" id="file-nome"></p>
+      <button class="btn" type="button" id="ocr" hidden>Leggi il PDF scannerizzato (OCR)</button>
+      <p class="file-name" id="ocr-nota"></p>
     </div>
 
     <div class="progress" id="progresso" hidden>
@@ -108,9 +114,10 @@
   <section class="notes">
     <p>
       ⚠️ Nessuno strumento automatico individua tutti i dati personali: rileggi sempre il
-      risultato prima di usarlo. L'elaborazione (estrazione del testo inclusa) avviene
-      interamente sul dispositivo; l'unica connessione di rete è il download del modello AI,
-      una sola volta. Per i dettagli: <a href="scheda-tecnica.html">scheda tecnica</a>.
+      risultato prima di usarlo. L'elaborazione (estrazione del testo e OCR inclusi) avviene
+      interamente sul dispositivo; l'unica connessione verso l'esterno è il download del modello
+      AI, una sola volta. Il motore OCR e i dati di lingua sono scaricati da questo stesso sito,
+      solo se premi quel pulsante. Per i dettagli: <a href="scheda-tecnica.html">scheda tecnica</a>.
     </p>
 
     <details class="rete" id="rete">
@@ -128,7 +135,9 @@
       <strong>La prova più semplice:</strong> apri questa pagina una volta con la connessione
       (il browser salva l'app e, se usi l'AI, il modello), poi attiva la modalità aereo e
       usala di nuovo: funziona lo stesso. Se funziona senza connessione, non può star
-      inviando nulla a nessun server.
+      inviando nulla a nessun server. Con l'AI e con i formati di file più pesanti la
+      disponibilità offline arriva dopo il primo utilizzo: le librerie si scaricano solo
+      quando servono, non all'apertura.
     </p>
   </section>
 
@@ -144,6 +153,6 @@
   </div>
 </footer>
 
-<script src="assets/app.js" defer></script>
+<script type="module" src="assets/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,5 @@
+LiberationSans-Regular.ttf
+Digitized data copyright (c) 2010 Google Corporation, Reserved Font Name Arimo.
+Copyright (c) 2012 Red Hat, Inc., Reserved Font Name Liberation.
+Licenza SIL Open Font License 1.1 — https://scripts.sil.org/OFL
+Il font viene incorporato nei PDF esportati solo per i glifi effettivamente usati.

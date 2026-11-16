@@ -5,11 +5,12 @@
  * star parlando con nessun server. Le richieste verso altri domini (i file
  * del modello AI) non vengono toccate.
  */
-const VERSIONE = "gdpr-sanitizer-v2";
-// Solo i file indispensabili per aprire la pagina: HTML, CSS e il bundle.
-// Il runtime WASM (21 MB) e il worker di pdf.js (1,3 MB) NON si precaricano:
-// verrebbero scaricati da ogni visitatore anche se non usa mai l'AI o i PDF.
-// Ci pensa la cache a runtime, alla prima utilizzazione reale.
+const VERSIONE = "gdpr-sanitizer-v3";
+// Solo i file indispensabili per aprire la pagina: HTML, CSS e il bundle con
+// i suoi chunk iniziali. Le librerie per office, PDF, AI e OCR (decine di MB)
+// NON si precaricano: entrano nella cache alla prima utilizzazione reale.
+// L'elenco dei chunk viene scritto dal build: sono i moduli che il bundle
+// importa subito, senza i quali la pagina non si avvierebbe offline.
 const CORE = [
   "./",
   "index.html",
@@ -17,7 +18,8 @@ const CORE = [
   "scheda-tecnica.html",
   "sanitizer.js",
   "assets/app.js",
-  "assets/app.css"
+  "assets/app.css",
+  "assets/chunk-C2HO2HXM.js"
 ];
 
 self.addEventListener("install", (event) => {

@@ -269,14 +269,16 @@
       <ul class="plain">
         <li>Riconosce e sostituisce i dati strutturati con segnaposto leggibili: <code>[EMAIL]</code>, <code>[CF/PIVA]</code>, <code>[IBAN/CARTA]</code>, <code>[TELEFONO]</code>, <code>[NOME]</code>, <code>[AZIENDA]</code>, <code>[LUOGO]</code> e altri.</li>
         <li>Verifica i caratteri di controllo di codici fiscali, partite IVA, IBAN e carte: non si limita a un controllo di forma.</li>
+        <li>Nella web app legge .txt, .docx, .xlsx, .csv e PDF, e restituisce il risultato nello stesso formato: su CSV ed Excel conserva righe, colonne e fogli, quindi gli importi e gli altri numeri che non sono dati personali restano al loro posto.</li>
+        <li>Sui PDF scannerizzati (solo immagini) attiva un OCR italiano e inglese che gira sul tuo computer: il testo viene estratto, mascherato e restituito.</li>
         <li>Lavora interamente in locale, anche offline dopo il primo avvio.</li>
         <li>Permette di correggere il risultato prima di copiarlo.</li>
       </ul>
       <h3>Non lo fa</h3>
       <ul class="plain">
         <li><strong>Non garantisce che ogni dato personale venga individuato.</strong> Nessuno strumento può farlo: la revisione umana resta necessaria, e lo strumento lo ricorda a ogni uso.</li>
-        <li>L'estensione non agisce dentro Word o Outlook desktop; la web app legge però i file .docx, .xlsx, .csv e i PDF di testo, e restituisce il risultato come .txt, .docx, .pdf o .csv.</li>
-        <li>Non legge i PDF scannerizzati (solo immagini): il riconoscimento OCR non è ancora disponibile.</li>
+        <li>L'estensione non agisce dentro Word o Outlook desktop; la web app legge però i file .docx, .xlsx, .csv e i PDF, e restituisce il risultato come .txt, .docx, .pdf, .xlsx o .csv.</li>
+        <li>Un PDF esportato viene reimpaginato in pagine A4: il testo è corretto, la grafica originale no. L'OCR non legge manoscritti né scansioni molto degradate.</li>
         <li>Non è certificato secondo alcuna norma: non esistono certificazioni GDPR o AI Act per strumenti di questo tipo.</li>
         <li>Non conserva, non registra e non trasmette i testi trattati.</li>
       </ul>

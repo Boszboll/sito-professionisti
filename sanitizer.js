@@ -157,6 +157,136 @@
   const REGEX_NOMI_SICURI = new RegExp(`(?:${alternanza(NOMI_SICURI)})`, "gu");
   const REGEX_NOMI_TUTTI = new RegExp(`(?:${alternanza(NOMI_TUTTI)})`, "gu");
   const INSIEME_NOMI_TUTTI = new Set(NOMI_TUTTI.map((nome) => nome.toLowerCase()));
+  const INSIEME_NOMI_SICURI = new Set(NOMI_SICURI.map((nome) => nome.toLowerCase()));
+
+  // ---------------------------------------------------------------------------
+  // Cognomi italiani
+  // ---------------------------------------------------------------------------
+  // Stesso criterio dei nomi, con un problema in più: molti cognomi italiani
+  // sono anche parole comuni, aggettivi o nomi di città (Rossi, Bianchi,
+  // Ferrari, Villa, Costa, Ferrara, Messina). Tre difese contro i falsi
+  // positivi:
+  //
+  //   G1. Un cognome "sicuro" che coincide con una parola comune viene
+  //       declassato ad ambiguo: l'incrocio con PAROLE_COMUNI avviene al
+  //       caricamento, quindi una svista nell'elenco non produce danni.
+  //   G2. I cognomi ambigui si mascherano SOLO con un contesto che li
+  //       qualifica (un nome proprio davanti, un titolo di cortesia): la
+  //       regola "nome + cognome" esiste già e li copre.
+  //   G3. Il cognome sicuro da solo si maschera solo se inizia con la
+  //       maiuscola ("Franchini", "FRANCHINI"): un "franchini" tutto
+  //       minuscolo dentro una frase resta com'è.
+  const PAROLE_COMUNI = new Set([
+    "costa", "coste", "sale", "villa", "sala", "monte", "monti", "pace", "guerra",
+    "conte", "conti", "leone", "leoni", "serra", "fontana", "rosso", "rossa",
+    "bruno", "bruna", "gallo", "galli", "riccio", "marino", "romano", "greca",
+    "greco", "ferro", "ferri", "fava", "lupo", "lupi", "volpe", "volpi",
+    "sarto", "sarti", "barbiere", "barbieri", "fornaio", "fornari", "capello",
+    "capelli", "fattore", "fattori", "tedesco", "tedeschi", "turco", "turca",
+    "spagnolo", "spagnola", "spagnoli", "vecchio", "vecchi", "grande", "grandi",
+    "testa", "teste", "mazza", "carbone", "carboni", "riva", "rive", "spina",
+    "scarpa", "scarpe", "zecca", "verde", "verdi", "vitale", "vitelli",
+    "zoppo", "zoppi", "motta", "monaco", "poli", "righi", "novello", "novelli",
+    "salerno", "torre", "torri", "campo", "campi", "prato", "prati", "valle",
+    "valli", "ponte", "fonti", "fonte", "colle", "colli", "manzo", "manzi",
+    "benedetto", "benedetti", "gentile", "gentili", "longo", "longhi",
+    "bianco", "bianca", "nera", "nero", "neri", "grasso", "grassa", "grassi",
+    "amato", "amata", "silvestri", "pellegrino", "pellegrini", "barone",
+    "baroni", "palermo", "palumbo", "esposito", "caputo", "cattaneo",
+    "morelli", "moretti", "marino", "marini", "ferrara", "ferrari", "ferrero"
+  ]);
+
+  const COGNOMI_SICURI = [
+    "Franchini", "Zanichelli", "Bertolini", "Bettini", "Ferretti", "Galliani",
+    "Bernardi", "Bertoldi", "Bresciani", "Brunelli", "Bucci", "Callegari",
+    "Cantoni", "Carletti", "Caselli", "Castaldi", "Cecchetti", "Cipriani",
+    "Cocchi", "Coletta", "Crespi", "De Filippi", "Del Prete", "Di Marco",
+    "Di Stefano", "Donati", "Falconi", "Fantini", "Ferrando", "Fiorentini",
+    "Fiorini", "Franceschi", "Gagliardi", "Gamberini", "Gherardi", "Giannini",
+    "Gori", "Guarnieri", "Guerrini", "Guidi", "Guidotti", "Landi", "Lenzi",
+    "Lorenzini", "Lucarelli", "Magni", "Malaguti", "Manetti", "Mannucci",
+    "Marangoni", "Marcucci", "Mariotti", "Marzocchi", "Massari", "Matteucci",
+    "Mazzanti", "Mengoni", "Merlini", "Meucci", "Miceli", "Nannini", "Nardini",
+    "Nicolini", "Orlandi", "Ottaviani", "Pagani", "Pandolfi", "Paoletti",
+    "Pascucci", "Pennacchi", "Perini", "Pignatelli", "Pisani", "Prosperi",
+    "Quattrocchi", "Ranieri", "Ravasi", "Rinaldini", "Rocchi", "Romagnoli",
+    "Ronchi", "Ruggeri", "Sabatini", "Santarelli", "Serafini", "Signorelli",
+    "Simonetti", "Spinelli", "Stefanelli", "Strozzi", "Tacconi", "Tamburini",
+    "Tarquini", "Tessari", "Tomaselli", "Trevisan", "Vaccaro", "Valeri",
+    "Vannucci", "Vianello", "Viganò", "Vincenzi", "Zambon", "Zanella",
+    "Zanetti", "Zani", "Zanon", "Zorzi", "Baldini", "Bardi", "Bellini",
+    "Benassi", "Berti", "Biagi", "Biondi", "Ciani", "Comelli", "D'Amico",
+    "D'Amato", "Degli Esposti", "Di Lorenzo", "Ferrucci", "Gallucci",
+    "Gattuso", "Giannelli", "Giorgetti", "Guglielmi", "Lattanzi", "Mancuso",
+    "Marchegiani", "Masini", "Melchiorri", "Micheli", "Montanelli",
+    "Pasquali", "Pellizzari", "Petrini", "Piras", "Rastelli", "Ricciardi",
+    "Ruggieri", "Sabbatini", "Silvestrini", "Tassinari", "Vaccari", "Venturi",
+    "Vignoli", "Visconti", "Zampieri", "Barbato", "Beccari", "Bellandi",
+    "Benvenuti", "Bergamaschi", "Bianchini", "Boldrini", "Bonaccorsi",
+    "Bonifazi", "Borselli", "Bottari", "Brunori", "Cacciatori", "Calabrò",
+    "Capuano", "Carraro", "Casadei", "Cecchini", "Ciampi", "Corradini",
+    "Cortellini", "Dallari", "De Marchi", "De Paoli", "Del Bianco",
+    "Diamanti", "Falcinelli", "Ferrigno", "Fiorelli", "Franceschini",
+    "Gabrielli", "Galeazzi", "Gallerani", "Garzoni", "Giovannini", "Gonnella",
+    "Gualtieri", "Lazzarini", "Leonardi", "Lombardo", "Lucidi", "Macellari",
+    "Malaspina", "Manzini", "Marcolini", "Martinengo", "Mazzoleni",
+    "Mercuri", "Mezzadri", "Molinari", "Montesi", "Moschetti", "Murgia",
+    "Nardelli", "Nocentini", "Oddi", "Olivieri", "Onofri", "Paci", "Pagnotta",
+    "Palladino", "Panzeri", "Pedretti", "Pellegatta", "Percassi", "Perrone",
+    "Petrucci", "Piacentini", "Piccioni", "Pieri", "Pinelli", "Pirani",
+    "Polverini", "Pozzetti", "Prandini", "Ramazzotti", "Reverberi", "Riboldi",
+    "Rispoli", "Rondinelli", "Rovelli", "Ruscelli", "Sabbadini", "Salvatori",
+    "Sampieri", "Santucci", "Sbaraglia", "Scarabelli", "Scarpellini",
+    "Segatori", "Semprini", "Sernesi", "Silvani", "Soncini", "Soprani",
+    "Sperandio", "Spighi", "Stanghellini", "Stoppani", "Tabarri",
+    "Tagliaferri", "Tarabella", "Terziani", "Tomatis", "Toniato", "Tornatore",
+    "Tramontano", "Travaglia", "Tremonti", "Turrini", "Ubaldi", "Ubertini",
+    "Vagaggini", "Vallorani", "Vanni", "Vasarri", "Vender", "Vettori",
+    "Zaccaria", "Zaghi", "Zaniboni", "Zappaterra", "Zerbini", "Zoppellari"
+  ];
+
+  const COGNOMI_AMBIGUI = [
+    "Rossi", "Russo", "Ferrari", "Esposito", "Bianchi", "Romano", "Colombo",
+    "Ricci", "Marino", "Greco", "Bruno", "Gallo", "Conti", "De Luca", "Costa",
+    "Giordano", "Mancini", "Rizzo", "Lombardi", "Moretti", "Barbieri",
+    "Fontana", "Mariani", "Rinaldi", "Caruso", "Ferrara", "Galli", "Martini",
+    "Leone", "Longo", "Gentile", "Martinelli", "Vitale", "Serra", "Coppola",
+    "De Santis", "D'Angelo", "Marchetti", "Parisi", "Villa", "Conte",
+    "Ferraro", "Ferri", "Fabbri", "Bianco", "Marini", "Grasso", "Valentini",
+    "Messina", "Sala", "De Angelis", "Gatti", "Pellegrini", "Palumbo",
+    "Sanna", "Farina", "Rizzi", "Monti", "Cattaneo", "Morelli", "Amato",
+    "Silvestri", "Mazza", "Testa", "Grassi", "Pellegrino", "Carbone",
+    "Giuliani", "Benedetti", "Barone", "Rossetti", "Caputo", "Montanari",
+    "Guerra", "Palermo", "Pace", "Neri", "Sartori", "Riva", "Spina", "Scarpa",
+    "Zecca", "Verdi", "Vitelli", "Zoppi", "Motta", "Monaco", "Poli", "Righi",
+    "Novelli", "Tedeschi", "Turco", "Spagnoli", "Vecchi", "Grandi", "Lupi",
+    "Volpi", "Fattori", "Capelli", "Fornari", "Briganti", "Manzoni",
+    "Rossini", "Salerno", "Torre", "Campo", "Prato", "Valle", "Ponte", "Colle"
+  ];
+
+  // G1: incrocio di sicurezza "sicuro" ↔ "parola comune". Un cognome che
+  // compare in PAROLE_COMUNI o in COGNOMI_AMBIGUI non viene mai usato da solo.
+  const AMBIGUI_INSIEME = new Set(COGNOMI_AMBIGUI.map((c) => c.toLowerCase()));
+  const COGNOMI_DA_SOLI = [
+    ...new Set(
+      COGNOMI_SICURI.filter(
+        (cognome) => !PAROLE_COMUNI.has(cognome.toLowerCase()) && !AMBIGUI_INSIEME.has(cognome.toLowerCase())
+      )
+    )
+  ];
+  const REGEX_COGNOMI_DA_SOLI = new RegExp(
+    `(?<![\\p{L}\\p{N}_\\[])(?:${alternanza(COGNOMI_DA_SOLI)})(?![\\p{L}\\p{N}_])`,
+    "giu"
+  );
+
+  // Cognomi ambigui (Rossi, Bianchi, Ferrari…) scritti tutti in maiuscolo.
+  // Non sono attivi per impostazione predefinita: in un testo normale "ROSSI"
+  // può essere l'aggettivo "rossi" scritto male o un'intestazione, quindi la
+  // regola si accende solo se l'utente la chiede (opzione cognomiAmbigui).
+  const REGEX_COGNOMI_AMBIGUI = new RegExp(
+    `(?<![\\p{L}\\p{N}_\\[])(?:${alternanza(COGNOMI_AMBIGUI)})(?![\\p{L}\\p{N}_])`,
+    "giu"
+  );
 
   /** true se il carattere prima del match apre una frase o un elenco. */
   function inizioFrase(stringa, offset) {
@@ -341,6 +471,36 @@
     return INSIEME_NOMI_TUTTI.has(primo) ? PLACEHOLDER.NOME : null;
   }
 
+  /**
+   * Nome proprio isolato scritto in maiuscolo: capita negli estratti conto e
+   * nei moduli con il layout a colonne, dove nome e cognome finiscono su righe
+   * diverse, e nelle intestazioni. Si usa solo l'elenco dei nomi non ambigui,
+   * così parole come ROSA, STELLA o VITTORIA restano intatte.
+   */
+  function trasformaNomeMaiuscoloSingolo(match) {
+    return INSIEME_NOMI_SICURI.has(match.toLowerCase()) ? PLACEHOLDER.NOME : null;
+  }
+
+  /**
+   * Cognome riconosciuto da solo (solo elenco dei non ambigui).
+   * G3: serve l'iniziale maiuscola. Un "franchini" tutto minuscolo dentro una
+   * frase è più probabilmente un refuso o un'altra parola e resta com'è.
+   */
+  function trasformaCognomeDaSolo(match) {
+    if (!/^\p{Lu}/u.test(match)) return null;
+    return PLACEHOLDER.NOME;
+  }
+
+  /**
+   * Cognome ambiguo da solo (Rossi, Bianchi, Ferrari…). Attivo solo con
+   * l'opzione cognomiAmbigui e solo se la parola è scritta in maiuscolo:
+   * negli estratti conto e negli elenchi i nomi sono in maiuscolo, mentre nel
+   * testo corrente "rossi" è quasi sempre l'aggettivo o il colore.
+   */
+  function trasformaCognomeAmbiguoMaiuscolo(match) {
+    return /^\p{Lu}[\p{Lu}\s'’\-]+$/u.test(match) ? PLACEHOLDER.NOME : null;
+  }
+
   // ---------------------------------------------------------------------------
   // Regole. L'ORDINE È IMPORTANTE: dalle più specifiche alle più generiche, così
   // le sequenze lunghe di cifre non vengono "spezzettate" da regole più deboli.
@@ -351,6 +511,17 @@
   // ancorare l'inizio del match senza consumare caratteri. Nessun quantificatore
   // annidato: il tempo di esecuzione resta lineare anche su testi molto lunghi.
   // ---------------------------------------------------------------------------
+  // Tipo di via che accetta sia "Via" sia "VIA" sia "via", senza usare il flag
+  // /i (che renderebbe insensibile alle maiuscole anche \p{Lu}, togliendo il
+  // vincolo sull'iniziale del nome della via).
+  const TIPI_VIA = [
+    "via", "viale", "piazza", "piazzale", "piazzetta", "corso", "vicolo",
+    "largo", "lungomare", "strada", "contrada", "traversa", "salita", "borgo"
+  ];
+  const ALTERNANZA_TIPI_VIA = TIPI_VIA
+    .map((parola) => parola.split("").map((c) => `[${c.toUpperCase()}${c.toLowerCase()}]`).join(""))
+    .join("|");
+
   const REGOLE = [
     {
       // Chiave privata PEM: il blocco intero, perché anche l'intestazione è
@@ -433,13 +604,33 @@
       // Indirizzo italiano: tipo di via + nome + civico, con CAP e città
       // opzionali. Richiede il civico e almeno un nome proprio con l'iniziale
       // maiuscola: così frasi come "via di sviluppo da 5 anni" o "corso di
-      // laurea 3 anni" non vengono mascherate. Le iniziali dei tipi di via
-      // sono scritte a mano perché il flag /i renderebbe \p{Lu} insensibile
-      // alle maiuscole.
+      // laurea 3 anni" non vengono mascherate. Il tipo di via accetta sia
+      // "Via" sia "VIA": negli estratti conto gli indirizzi sono spesso tutti
+      // in maiuscolo, e un flag /i renderebbe \p{Lu} insensibile alle
+      // maiuscole, facendo perdere il vincolo sul nome della via.
       chiave: "INDIRIZZO",
-      regex:
-        /(?<![\p{L}\p{N}_])(?:[Vv]ia|[Vv]iale|[Pp]iazza|[Pp]iazzale|[Pp]iazzetta|[Cc]orso|[Vv]icolo|[Ll]argo|[Ll]ungomare|[Ss]trada|[Cc]ontrada|[Tt]raversa|[Ss]alita|[Bb]orgo)\s+(?:[\p{L}\p{M}'’.\-]+\s+){0,4}\p{Lu}[\p{L}\p{M}'’.\-]*\s*,?\s*\d{1,4}[a-z]?(?:\s*,\s*\d{5}(?:\s+\p{Lu}[\p{L}\p{M}'’.\-]*){0,3}(?:\s*\(\s*[A-Z]{2}\s*\))?)?(?![\p{L}\p{N}])/gu,
+      regex: new RegExp(
+        `(?<![\\p{L}\\p{N}_])(?:${ALTERNANZA_TIPI_VIA})\\s+(?:[\\p{L}\\p{M}'’\\-.]+\\s+){0,4}\\p{Lu}[\\p{L}\\p{M}'’\\-.]*\\s*,?\\s*\\d{1,4}(?:[A-Za-z]{0,2}|\\s*\\/\\s*[A-Za-z]{1,3})?(?:\\s*,\\s*\\d{5}(?:\\s+\\p{Lu}[\\p{L}\\p{M}'’\\-.]*){0,3}(?:\\s*\\(\\s*[A-Z]{2}\\s*\\))?)?(?![\\p{L}\\p{N}])`,
+        "gu"
+      ),
       trasforma: () => PLACEHOLDER.INDIRIZZO
+    },
+    {
+      // CAP seguito da città e sigla di provincia ("57023 CECINA LI"), tipico
+      // degli indirizzi andati a capo negli estratti conto. La sigla di
+      // provincia è obbligatoria: senza, un numero di 5 cifre in una tabella
+      // (importi, quantità) verrebbe mascherato per errore.
+      chiave: "INDIRIZZO",
+      regex: /(?<![\p{L}\p{N}_])(?<!\p{N}[.,/-])\d{5}\s+\p{Lu}[\p{L}\p{M}'’]{2,}\s+[A-Z]{2}(?![\p{L}\p{N}])/gu,
+      trasforma: () => PLACEHOLDER.INDIRIZZO
+    },
+    {
+      // Identificativo di pratica/riferimento introdotto da un'etichetta:
+      // "Rif. interni: 011026.309243001", "pratica n. 45187". Identifica
+      // indirettamente una persona o un rapporto, quindi va mascherato.
+      chiave: "PRATICA",
+      regex: /(?<![\p{L}\p{N}_])(?:[Rr]if\.?\s*(?:intern[oi])?|[Rr]iferimento|[Pp]ratica|[Cc]ontratto|[Pp]olizza)\s*[:#n.]{0,3}\s*[A-Za-z0-9][\w./-]{5,}(?![\w/])/gu,
+      trasforma: () => PLACEHOLDER.PRATICA
     },
     {
       // Data di scadenza in formato MM/AA: solo se introdotta da un'etichetta,
@@ -575,8 +766,31 @@
       chiave: "NOME",
       regex: new RegExp(`(?<![\\p{L}\\p{N}_\\[])(?:${alternanza(NOMI_SICURI)})(?![\\p{L}\\p{N}_])`, "gu"),
       trasforma: trasformaNomeSingolo
+    },
+    {
+      // Nome singolo tutto in maiuscolo: negli estratti conto e nei moduli a
+      // colonne nome e cognome finiscono spesso su righe diverse, quindi la
+      // regola "nome + cognome" non li vede. Solo nomi non ambigui.
+      chiave: "NOME",
+      regex: /(?<![\p{L}\p{N}_\[])\p{Lu}{3,}(?![\p{L}\p{N}_])/gu,
+      trasforma: trasformaNomeMaiuscoloSingolo
+    },
+    {
+      // Cognome riconosciuto da solo: "Franchini", "FRANCHINI". Usa solo
+      // l'elenco dei cognomi che non sono anche parole comuni (vedi G1/G3).
+      chiave: "NOME",
+      regex: REGEX_COGNOMI_DA_SOLI,
+      trasforma: trasformaCognomeDaSolo
     }
   ];
+
+  // Regola facoltativa: si aggiunge in coda solo quando richiesta.
+  const REGOLA_COGNOMI_AMBIGUI = {
+    chiave: "NOME",
+    regex: REGEX_COGNOMI_AMBIGUI,
+    trasforma: trasformaCognomeAmbiguoMaiuscolo
+  };
+  const REGOLE_CON_AMBIGUI = [...REGOLE, REGOLA_COGNOMI_AMBIGUI];
 
   // ---------------------------------------------------------------------------
   // API pubblica
@@ -585,12 +799,16 @@
   /**
    * Sostituisce i dati personali riconosciuti con i placeholder.
    * @param {string} input Testo originale.
+   * @param {{cognomiAmbigui?: boolean}} [opzioni]
+   *   cognomiAmbigui = true maschera anche i cognomi ambigui scritti in
+   *   maiuscolo ("ROSSI"): utile per estratti conto, rischioso sul testo
+   *   corrente, per questo è spento per impostazione predefinita.
    * @returns {{text: string, total: number, counts: Object<string, number>}}
    *   text   = testo mascherato
    *   total  = numero complessivo di sostituzioni
    *   counts = sostituzioni per categoria (EMAIL, TELEFONO, CF_PIVA, IBAN_CARTA, DATA)
    */
-  function sanitize(input) {
+  function sanitize(input, opzioni) {
     const counts = {
       EMAIL: 0,
       TELEFONO: 0,
@@ -612,8 +830,9 @@
 
     let testo = input;
     let total = 0;
+    const regole = opzioni && opzioni.cognomiAmbigui ? REGOLE_CON_AMBIGUI : REGOLE;
 
-    for (const regola of REGOLE) {
+    for (const regola of regole) {
       testo = testo.replace(regola.regex, (...argomenti) => {
         // Per String.replace gli ultimi due argomenti sono sempre l'offset e la
         // stringa di partenza (nessuna regex qui usa gruppi con nome).
