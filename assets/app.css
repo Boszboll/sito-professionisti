@@ -102,6 +102,15 @@ textarea:focus { outline: 2px solid rgba(29, 78, 216, 0.35); border-color: var(-
 .editor .hl {
   background: #fde68a; color: #78350f; border-radius: 3px; cursor: pointer;
 }
+/* Segnaposto già applicati: un clic li riporta al testo originale. */
+.editor .ph {
+  background: #e0e7ff; color: #1e3a8a; border-bottom: 1px dashed #4f46e5;
+  border-radius: 3px; cursor: pointer; padding: 0 1px;
+}
+.editor .ph:hover, .editor .hl:hover { filter: brightness(0.95); }
+.editor .ph.cens {
+  background: #1f2937; color: #f9fafb; border-bottom-color: #9ca3af;
+}
 .bolla {
   position: fixed; z-index: 10; display: inline-flex; align-items: center;
   padding: 7px 11px; background: #111827; color: #fff;

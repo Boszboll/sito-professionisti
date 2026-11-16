@@ -81,13 +81,15 @@
       <div class="editor" id="editor" contenteditable="true" spellcheck="false"
            role="textbox" aria-multiline="true" aria-label="Testo anonimizzato"></div>
       <p class="guida">
-        Le parole evidenziate sono suggerimenti: fai clic su una parola per censurarla, oppure
-        seleziona una parte di testo e usa «Censura selezione» o Ctrl+Shift+X. Ctrl+Z annulla
-        l'ultima censura.
+        Le parole evidenziate in giallo sono suggerimenti: fai clic per censurarle. I segnaposto
+        come <code>[NOME]</code> o <code>[CENSURATO]</code> sono invece cliccabili al contrario:
+        un clic li riporta al testo originale, se la mascheratura ha preso qualcosa che non era
+        un dato personale. Per una parte di testo più lunga selezionala e usa «Censura selezione»
+        o Ctrl+Shift+X. Ctrl+Z annulla l'ultima modifica.
       </p>
       <div class="row-actions">
         <button class="btn" type="button" id="censura-selezione" disabled>Censura selezione</button>
-        <button class="btn" type="button" id="annulla-censura" disabled>↶ Annulla censura</button>
+        <button class="btn" type="button" id="annulla-censura" disabled>↶ Annulla ultima modifica</button>
       </div>
     </div>
 

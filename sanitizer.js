@@ -792,6 +792,71 @@
   };
   const REGOLE_CON_AMBIGUI = [...REGOLE, REGOLA_COGNOMI_AMBIGUI];
 
+  // Riconosce i segnaposto già inseriti, ricavandoli dalla stessa tabella usata
+  // per crearli: aggiungerne uno nuovo non richiede modifiche qui.
+  const REGEX_SEGNAPOSTI = new RegExp(
+    `\\[(?:${[...new Set(Object.values(PLACEHOLDER))]
+      .map((valore) => valore.slice(1, -1).replace(/[/\\^$.*+?()[\]{}|]/g, "\\$&"))
+      .join("|")})\\]`,
+    "g"
+  );
+
+  /**
+   * Accoppia ogni segnaposto del testo mascherato al valore che ha sostituito.
+   * È l'operazione inversa della mascheratura: serve a rimettere una parola
+   * che non andava tolta. Il confronto funziona perché fra due segnaposto il
+   * testo non cambia, quindi si allineano i pezzi letterali e ciò che resta in
+   * mezzo è il valore originale. Se l'allineamento non torna (testo modificato
+   * a mano, risultati inattesi) si restituisce un elenco vuoto: meglio nessun
+   * ripristino che rimettere la parola sbagliata.
+   * @param {string} originale Testo prima della mascheratura.
+   * @param {string} mascherato Testo dopo la mascheratura.
+   * @returns {Array<{start: number, end: number, valore: string}>} posizioni nel testo mascherato
+   */
+  function accoppiaSegnaposti(originale, mascherato) {
+    const esiti = [];
+    if (typeof originale !== "string" || typeof mascherato !== "string" || !originale) return esiti;
+    const trovati = [...mascherato.matchAll(REGEX_SEGNAPOSTI)]
+      .map((m) => ({ start: m.index, end: m.index + m[0].length }));
+    if (trovati.length === 0) return esiti;
+
+    // Pezzi letterali: quello prima di ogni segnaposto, più la coda finale.
+    const segmenti = [];
+    let ultimo = 0;
+    for (const t of trovati) {
+      segmenti.push(mascherato.slice(ultimo, t.start));
+      ultimo = t.end;
+    }
+    segmenti.push(mascherato.slice(ultimo));
+
+    const posizioni = [];
+    let cursore = 0;
+    for (let i = 0; i < segmenti.length; i += 1) {
+      const segmento = segmenti[i];
+      if (i === segmenti.length - 1) {
+        // La coda chiude il documento: sta per forza in fondo anche nell'originale.
+        if (!originale.endsWith(segmento)) return [];
+        posizioni.push(originale.length - segmento.length);
+        continue;
+      }
+      if (segmento === "") {
+        posizioni.push(cursore);
+        continue;
+      }
+      const indice = originale.indexOf(segmento, cursore);
+      if (indice === -1) return [];
+      posizioni.push(indice);
+      cursore = indice + segmento.length;
+    }
+
+    trovati.forEach((t, i) => {
+      const inizio = posizioni[i] + segmenti[i].length;
+      const fine = posizioni[i + 1];
+      if (fine > inizio) esiti.push({ start: t.start, end: t.end, valore: originale.slice(inizio, fine) });
+    });
+    return esiti;
+  }
+
   // ---------------------------------------------------------------------------
   // API pubblica
   // ---------------------------------------------------------------------------
@@ -850,7 +915,7 @@
     return { text: testo, total, counts };
   }
 
-  const api = Object.freeze({ sanitize, PLACEHOLDER });
+  const api = Object.freeze({ sanitize, accoppiaSegnaposti, PLACEHOLDER });
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api; // test in Node
