@@ -412,9 +412,45 @@
   }
 
   /** Telefono fisso italiano: 7-11 cifre complessive (prefisso 0 incluso). */
-  function trasformaFissoItaliano(match) {
+  function trasformaFissoItaliano(match, offset, stringa) {
     const numeroCifre = match.replace(/\D/g, "").length;
-    return numeroCifre >= 7 && numeroCifre <= 11 ? PLACEHOLDER.TELEFONO : null;
+    if (numeroCifre < 7 || numeroCifre > 11) return null;
+    // Un identificativo attaccato ai due punti ("arXiv:0901.2757", "doi:...")
+    // non è un numero di telefono: è il codice di un documento.
+    if (/[\p{L}]{2,}:$/u.test(stringa.slice(0, offset))) return null;
+    return PLACEHOLDER.TELEFONO;
+  }
+
+  // Titoli di cortesia: se la parola prima delle iniziali è uno di questi, il
+  // nome che segue è una persona ("Dott. M. Rossi") e va mascherato.
+  const TITOLI_CORTESIA_MINUSCOLI = new Set([
+    "sig", "sig.ra", "signor", "signora", "signore", "dott", "dott.ssa", "dottor",
+    "dottoressa", "avv", "avvocato", "ing", "ingegnere", "arch", "architetto",
+    "geom", "geometra", "rag", "ragioniere", "prof", "prof.ssa", "professore",
+    "professoressa", "egr", "spett", "on", "onorevole", "sen", "senatore"
+  ]);
+
+  /**
+   * Iniziale puntata + cognome: "J. Zierenberg", "M. J. Teper", "L. von Smekal".
+   * È il modo in cui compaiono i nomi stranieri dentro citazioni, note e
+   * bibliografie, dove i dizionari italiani non arrivano. Tre difese contro i
+   * falsi positivi:
+   *  - il cognome non deve essere una parola comune (PAROLE_COMUNI);
+   *  - se il cognome è corto e seguito da punto è un'abbreviazione ("Lgs.");
+   *  - se prima delle iniziali c'è a sua volta un'abbreviazione ("Phys. J. …")
+   *    non è un nome, a meno che non sia un titolo di cortesia.
+   */
+  function trasformaInizialeCognome(match, offset, stringa) {
+    const parti = match.trim().split(/\s+/u);
+    const cognome = parti[parti.length - 1];
+    if (PAROLE_COMUNI.has(cognome.toLowerCase())) return null;
+    // Sigle brevi tutte in maiuscolo dopo un'iniziale ("P. IVA", "C. CCNL")
+    // sono acronimi, non cognomi.
+    if (cognome.length <= 4 && cognome === cognome.toUpperCase()) return null;
+    if (stringa.startsWith(".", offset + match.length) && cognome.length <= 4) return null;
+    const abbreviazione = /([\p{L}]+)\.\s*$/u.exec(stringa.slice(0, offset));
+    if (abbreviazione && !TITOLI_CORTESIA_MINUSCOLI.has(abbreviazione[1].toLowerCase())) return null;
+    return PLACEHOLDER.NOME;
   }
 
   /**
@@ -743,6 +779,15 @@
       regex:
         /(?<![\p{L}\p{N}_])((?:[Ss]ig\.?\s?ra|[Ss]ig\.|[Ss]ignor(?:[ea])?|[Dd]ott\.?ssa|[Dd]ott\.?|[Dd]ottoressa|[Aa]vv\.?|[Aa]vvocato|[Ii]ng\.?|[Ii]ngegnere|[Aa]rch\.?|[Aa]rchitetto|[Gg]eom\.?|[Rr]ag\.?|[Pp]rof\.?ssa|[Pp]rof\.?|[Pp]rofessor[ea]|[Ee]gr\.?|[Ss]pett\.le)\.?)\s+((?:\p{Lu}[\p{L}\p{M}'’\-]+\s*){1,3})/gu,
       trasforma: trasformaTitolo
+    },
+    {
+      // Iniziale puntata + cognome: "J. Zierenberg", "M. J. Teper",
+      // "L. von Smekal". Copre i nomi stranieri di citazioni e bibliografie,
+      // che i dizionari italiani non contengono (vedi trasformaInizialeCognome).
+      chiave: "NOME",
+      regex:
+        /(?<![\p{L}\p{N}_\[])(?:\p{Lu}\.\s?){1,4}(?:(?:von|van|de|der|den|di|da|del|della|dello|dos|das|du|le|la|ten|ter|bin|ibn)\s+)?\p{Lu}[\p{L}\p{M}'’\-]{2,}(?![\p{L}\p{N}])/gu,
+      trasforma: trasformaInizialeCognome
     },
     {
       // Nome + cognome (o nome + altra parola maiuscola). La parola successiva
