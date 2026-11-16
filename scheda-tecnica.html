@@ -198,10 +198,13 @@ seleziona il testo                            apre la pagina / carica un file
   <tr><td>Preferenze e contatore d'uso (estensione)</td><td><code>chrome.storage.local</code></td><td>Data corrente e numero di utilizzi giornalieri. Nessun testo.</td></tr>
   <tr><td>Cache del modello (versione web)</td><td>IndexedDB della pagina</td><td>File pubblici del modello di IA. Nessun dato dell'utente.</td></tr>
   <tr><td>File dell'applicazione (versione web)</td><td>Cache Storage del service worker</td><td>Solo HTML, CSS e codice della pagina, per l'uso offline. Nessun contenuto dell'utente.</td></tr>
+  <tr><td>Parole da non toccare (versione web)</td><td><code>localStorage</code> della pagina</td><td>Solo se l'utente compila quell'elenco: le parole che ha scelto di lasciare intatte. Nessun testo del documento. Si cancella con «Svuota elenco» o svuotando i dati del sito.</td></tr>
 </table>
 <p>
   <strong>I testi e i file elaborati non vengono mai salvati</strong>, né su disco né in alcun
-  registro, e non sono accessibili a terzi. La rimozione dell'estensione elimina i primi due
+  registro, e non sono accessibili a terzi. L'unica eccezione è l'elenco «parole da non
+  toccare», se l'utente lo compila: è una preferenza, non il contenuto del documento, e resta
+  sul suo dispositivo. La rimozione dell'estensione elimina i primi due
   dati; per la versione web basta svuotare i dati del sito. I file importati vengono letti in
   memoria e non vengono copiati altrove.
 </p>

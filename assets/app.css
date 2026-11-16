@@ -73,6 +73,38 @@ textarea:focus { outline: 2px solid rgba(29, 78, 216, 0.35); border-color: var(-
 .drop.drag { border-color: var(--accent); background: #eff6ff; }
 .file-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-top: 8px; }
 
+/* Parole da non toccare */
+.esclusioni {
+  margin-top: 14px; padding: 12px 14px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--bg-soft);
+}
+.esclusioni summary {
+  cursor: pointer; font-size: 14px; font-weight: 650; color: var(--ink);
+}
+.esclusioni summary::marker { color: var(--accent); }
+.esclusioni .conteggio { font-weight: 500; color: var(--ink-soft); }
+.esclusioni .file-hint { display: block; margin: 8px 0 10px; }
+.esclusioni label { font-size: 14px; }
+.input-esclusione {
+  flex: 1 1 240px; min-width: 160px; padding: 9px 12px;
+  border: 1px solid #d1d5db; border-radius: 8px; font-family: inherit; font-size: 14px;
+}
+.input-esclusione:focus { outline: 2px solid rgba(29, 78, 216, 0.35); border-color: var(--accent); }
+.chip-list { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 10px 0 0; padding: 0; }
+.chip-list:empty { display: none; }
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 6px 4px 10px; border-radius: 999px;
+  background: #e0e7ff; color: #1e3a8a; font-size: 13px; font-weight: 600;
+}
+.chip-x {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; padding: 0; border: 0; border-radius: 50%;
+  background: rgba(30, 58, 138, 0.16); color: #1e3a8a;
+  font-family: inherit; font-size: 14px; line-height: 1; cursor: pointer;
+}
+.chip-x:hover { background: rgba(30, 58, 138, 0.32); }
+
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 11px 20px; border-radius: 10px; border: 1px solid var(--line);

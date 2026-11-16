@@ -846,6 +846,57 @@
     "g"
   );
 
+  // ---------------------------------------------------------------------------
+  // Parole da non toccare
+  // ---------------------------------------------------------------------------
+  // Prima di applicare le regole, le parole scelte dall'utente vengono sostituite
+  // con un segnaposto neutro: così nessuna regola può colpirle e il testo resta
+  // intatto anche quando la parola somiglia a un dato personale. Il segnaposto
+  // sopravvive anche all'analisi AI (ner-logic lo protegge) e viene rimesso al
+  // suo posto da rimettiEsclusioni() alla fine.
+  const PREFISSO_ESCLUSO = "[ESCLUSO#";
+
+  const escapeRegex = (testo) => testo.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+
+  /**
+   * Sostituisce le parole da non toccare con i segnaposti neutri.
+   * Ogni occorrenza riceve un segnaposto proprio: così si conserva la grafia
+   * esatta ("ACME" e "acme" restano come sono).
+   * @param {string} input
+   * @param {string[]} elenco parole intere (confronto senza distinzione di maiuscole)
+   * @returns {{testo: string, protette: string[]}} protette = valori nell'ordine dei segnaposti
+   */
+  function applicaEsclusioni(input, elenco) {
+    let testo = input;
+    const protette = [];
+    for (const voce of elenco) {
+      const parola = String(voce ?? "").trim();
+      if (parola.length < 2) continue;
+      const regex = new RegExp(
+        `(?<![\\p{L}\\p{N}_])${escapeRegex(parola)}(?![\\p{L}\\p{N}_])`,
+        "giu"
+      );
+      testo = testo.replace(regex, (trovato) => {
+        protette.push(trovato);
+        return `${PREFISSO_ESCLUSO}${protette.length - 1}]`;
+      });
+    }
+    return { testo, protette };
+  }
+
+  /**
+   * Rimette al loro posto le parole lasciate intatte.
+   * Da chiamare dopo l'eventuale analisi AI, che vede solo i segnaposti.
+   */
+  function rimettiEsclusioni(testo, protette) {
+    if (!protette || protette.length === 0) return testo;
+    const regex = new RegExp(`\\[ESCLUSO#(\\d+)\\]`, "g");
+    return testo.replace(regex, (intero, indice) => {
+      const valore = protette[Number(indice)];
+      return valore === undefined ? intero : valore;
+    });
+  }
+
   /**
    * Accoppia ogni segnaposto del testo mascherato al valore che ha sostituito.
    * È l'operazione inversa della mascheratura: serve a rimettere una parola
@@ -935,12 +986,20 @@
       NOME: 0
     };
     if (typeof input !== "string" || input.length === 0) {
-      return { text: "", total: 0, counts };
+      return { text: "", total: 0, counts, protette: [] };
     }
 
     let testo = input;
     let total = 0;
     const regole = opzioni && opzioni.cognomiAmbigui ? REGOLE_CON_AMBIGUI : REGOLE;
+    // Le parole da non toccare escono dal testo prima delle regole e rientrano
+    // alla fine: nel mezzo restano segnaposti che nessuna regola riconosce.
+    let protette = [];
+    if (Array.isArray(opzioni?.esclusioni) && opzioni.esclusioni.length > 0) {
+      const esitoEsclusioni = applicaEsclusioni(testo, opzioni.esclusioni);
+      testo = esitoEsclusioni.testo;
+      protette = esitoEsclusioni.protette;
+    }
 
     for (const regola of regole) {
       testo = testo.replace(regola.regex, (...argomenti) => {
@@ -957,10 +1016,12 @@
       });
     }
 
-    return { text: testo, total, counts };
+    // Le esclusioni non vengono rimesse qui: chi chiama deve poter far passare
+    // prima l'analisi AI e poi usare rimettiEsclusioni().
+    return { text: testo, total, counts, protette };
   }
 
-  const api = Object.freeze({ sanitize, accoppiaSegnaposti, PLACEHOLDER });
+  const api = Object.freeze({ sanitize, accoppiaSegnaposti, rimettiEsclusioni, PLACEHOLDER });
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api; // test in Node

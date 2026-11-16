@@ -67,6 +67,23 @@
       <progress id="progresso-barra" max="100" value="0"></progress>
     </div>
 
+    <details class="esclusioni" id="esclusioni">
+      <summary>Parole da non toccare <span class="conteggio" id="esclusioni-conteggio"></span></summary>
+      <p class="file-hint">
+        Queste parole non vengono mai sostituite, né dalle regole né dall'AI: scrivile qui una
+        volta sola. Restano salvate solo in questo browser, mai inviate da nessuna parte.
+        Puoi anche selezionare una parola nel risultato e usare «Non toccare la selezione».
+      </p>
+      <div class="row-actions">
+        <label class="sr-only" for="esclusione-nuova">Parola da non toccare</label>
+        <input type="text" id="esclusione-nuova" class="input-esclusione" maxlength="60"
+               placeholder="Es. Studio Bianchi, Mario Rossi…" autocomplete="off">
+        <button class="btn" type="button" id="aggiungi-esclusione">Aggiungi</button>
+        <button class="btn" type="button" id="svuota-esclusioni" hidden>Svuota elenco</button>
+      </div>
+      <ul class="chip-list" id="esclusioni-lista"></ul>
+    </details>
+
     <div class="row-actions">
       <button class="btn btn-primary" type="button" id="maschera">Maschera i dati</button>
       <button class="btn" type="button" id="annulla-ai" hidden>Annulla AI</button>
@@ -84,11 +101,13 @@
         Le parole evidenziate in giallo sono suggerimenti: fai clic per censurarle. I segnaposto
         come <code>[NOME]</code> o <code>[CENSURATO]</code> sono invece cliccabili al contrario:
         un clic li riporta al testo originale, se la mascheratura ha preso qualcosa che non era
-        un dato personale. Per una parte di testo più lunga selezionala e usa «Censura selezione»
-        o Ctrl+Shift+X. Ctrl+Z annulla l'ultima modifica.
+        un dato personale. Con il tasto destro su un segnaposto, o con «Non toccare la selezione»,
+        quella parola viene anche ricordata e non verrà più toccata. Per una parte di testo più
+        lunga selezionala e usa «Censura selezione» o Ctrl+Shift+X. Ctrl+Z annulla l'ultima modifica.
       </p>
       <div class="row-actions">
         <button class="btn" type="button" id="censura-selezione" disabled>Censura selezione</button>
+        <button class="btn" type="button" id="non-toccare-selezione" disabled>Non toccare la selezione</button>
         <button class="btn" type="button" id="annulla-censura" disabled>↶ Annulla ultima modifica</button>
       </div>
     </div>
@@ -119,7 +138,8 @@
       risultato prima di usarlo. L'elaborazione (estrazione del testo e OCR inclusi) avviene
       interamente sul dispositivo; l'unica connessione verso l'esterno è il download del modello
       AI, una sola volta. Il motore OCR e i dati di lingua sono scaricati da questo stesso sito,
-      solo se premi quel pulsante. Per i dettagli: <a href="scheda-tecnica.html">scheda tecnica</a>.
+      solo se premi quel pulsante. Se compili l'elenco «parole da non toccare», resta salvato
+      solo in questo browser. Per i dettagli: <a href="scheda-tecnica.html">scheda tecnica</a>.
     </p>
 
     <details class="rete" id="rete">
