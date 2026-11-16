@@ -62,6 +62,14 @@
       <p class="file-name" id="ocr-nota"></p>
     </div>
 
+    <div class="pdf-pagine" id="pdf-pagine" hidden>
+      <label for="pdf-intervallo">Pagine da leggere</label>
+      <input type="text" id="pdf-intervallo" class="input-intervallo" autocomplete="off"
+             placeholder="es. 1-20, 35, 40-45 — vuoto = tutte">
+      <button class="btn" type="button" id="pdf-rileggi">Leggi queste pagine</button>
+      <p class="file-hint" id="pdf-info"></p>
+    </div>
+
     <div class="progress" id="progresso" hidden>
       <p id="progresso-testo">Preparazione dell'AI locale…</p>
       <progress id="progresso-barra" max="100" value="0"></progress>

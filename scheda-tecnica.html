@@ -101,6 +101,14 @@
   scaricati solo se l'utente preme quel pulsante, e restano poi nella cache del browser.
 </p>
 <p>
+  Sui PDF lunghi si può scegliere <strong>quali pagine leggere</strong> (per esempio «1-20, 35,
+  40-45»): il testo viene estratto solo da quelle, e lo stesso intervallo vale per l'OCR. È il
+  modo per lavorare su un fascicolo di centinaia di pagine senza tenere occupato il browser. Per
+  la stessa ragione l'analisi AI viene applicata solo ai testi fino a circa 200.000 caratteri
+  (una sessantina di pagine): oltre quella soglia lo strumento usa le sole regole e lo dichiara,
+  invece di bloccare la scheda per molti minuti.
+</p>
+<p>
   L'elaborazione avviene <strong>interamente sul dispositivo dell'utente</strong>. Né
   l'estensione né la versione web dispongono di server applicativi, non inviano i testi a
   terzi e non conservano copia di quanto elaborato.
@@ -264,7 +272,8 @@ seleziona il testo                            apre la pagina / carica un file
     <li>La revisione umana del testo prodotto è <strong>necessaria</strong> e l'estensione la richiede esplicitamente prima di ogni copia.</li>
     <li>L'estensione opera sul testo selezionato nel browser: <strong>non interviene</strong> su applicazioni desktop (Word, Outlook, Acrobat) né su file allegati.</li>
     <li><strong>PDF in uscita</strong>: il testo viene riscritto in pagine A4, quindi un PDF impaginato in modo complesso non torna identico all'originale. I caratteri latini, greci e cirillici sono conservati; ideogrammi e altre scritture non latine non sono rappresentabili e restano esclusi.</li>
-    <li><strong>OCR</strong>: funziona su scansioni leggibili, non su manoscritti, fax molto degradati o tabelle fitte. Il testo riconosciuto va riletto: l'OCR confonde cifre simili (0/O, 1/l, 5/S).</li>
+    <li><strong>OCR</strong>: funziona su scansioni leggibili, non su manoscritti, fax molto degradati o tabelle fitte. Il testo riconosciuto va riletto: l'OCR confonde cifre simili (0/O, 1/l, 5/S). Per documento si intendono al massimo 40 pagine per volta: oltre, si sceglie un intervallo.</li>
+    <li><strong>Documenti molto lunghi</strong>: l'analisi AI è limitata a circa 200.000 caratteri (una sessantina di pagine) per non tenere occupato il browser; oltre quella soglia si applicano le sole regole deterministiche e lo strumento lo dichiara. Le regole restano comunque attive su tutto il testo letto.</li>
     <li>Non costituisce strumento clinico né è progettata per il trattamento di categorie particolari di dati (art. 9 GDPR) senza adeguata valutazione autonoma del titolare.</li>
     <li><strong>Non esiste alcuna certificazione</strong> GDPR o AI Act per strumenti di questa natura: il presente documento è descrittivo e non sostituisce la valutazione del titolare o del suo consulente.</li>
   </ul>
