@@ -664,8 +664,10 @@
       // Identificativo di pratica/riferimento introdotto da un'etichetta:
       // "Rif. interni: 011026.309243001", "pratica n. 45187". Identifica
       // indirettamente una persona o un rapporto, quindi va mascherato.
+      // Il valore deve contenere almeno una cifra: "la pratica riguarda" è
+      // una frase, non un codice.
       chiave: "PRATICA",
-      regex: /(?<![\p{L}\p{N}_])(?:[Rr]if\.?\s*(?:intern[oi])?|[Rr]iferimento|[Pp]ratica|[Cc]ontratto|[Pp]olizza)\s*[:#n.]{0,3}\s*[A-Za-z0-9][\w./-]{5,}(?![\w/])/gu,
+      regex: /(?<![\p{L}\p{N}_])(?:[Rr]if\.?\s*(?:intern[oi])?|[Rr]iferimento|[Pp]ratica|[Cc]ontratto|[Pp]olizza)\s*[:#n.]{0,3}\s*(?=[\w./-]*\d)[A-Za-z0-9][\w./-]{5,}(?![\w/])/gu,
       trasforma: () => PLACEHOLDER.PRATICA
     },
     {
