@@ -12,6 +12,10 @@
   --warn-ink: #92400e;
 }
 * { box-sizing: border-box; }
+/* Senza questa regola un elemento con display impostato nel CSS (per esempio
+   .btn) resterebbe visibile nonostante l'attributo hidden: è così che i comandi
+   "Annulla AI", "OCR" e "Svuota elenco" comparivano quando non servivano. */
+[hidden] { display: none !important; }
 body {
   margin: 0;
   background: var(--bg);

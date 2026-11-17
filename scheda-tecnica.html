@@ -2,7 +2,7 @@
 <!--
   Scheda tecnica — GDPR AI-Sanitizer
   ---------------------------------------------------------------------------
-  Documento descrittivo, non consulenza legale. Si stampa in due facciate A4.
+  Documento descrittivo, non consulenza legale. Si stampa in A4 (circa sei pagine).
 
   PRIMA DI PUBBLICARE, sostituire:
     Lorenzo Franchini        nome e cognome
@@ -294,18 +294,46 @@ seleziona il testo                            apre la pagina / carica un file
   sull'uso di strumenti di IA).
 </p>
 
-<h2>10. Versioni e integrità</h2>
+<h2>10. Versioni e provenienza</h2>
 <table class="nobreak">
   <tr><th>Versione</th><td>1.2.0 (versione web: aggiornamento continuo, allineata alla stessa base di regole)</td></tr>
+  <tr><th>Ultimo aggiornamento</th><td>novembre 2026</td></tr>
   <tr><th>Distribuzione</th><td>Versione web su questo sito, senza installazione. L'estensione per Chrome/Edge viene fornita su richiesta, con il codice di sblocco</td></tr>
   <tr><th>Codice sorgente</th><td>non distribuito pubblicamente; disponibile su richiesta per la verifica tecnica del consulente privacy/DPO dello studio</td></tr>
   <tr><th>Modello di IA</th><td><code>Xenova/distilbert-base-multilingual-cased-ner-hrl</code>, quantizzato q8, licenza AFL-3.0 (attribuzione inclusa nel pacchetto)</td></tr>
   <tr><th>Requisiti</th><td>Estensione: Chrome o Edge 116 o successive. Versione web: qualsiasi browser recente (Chrome, Edge, Firefox, Safari).</td></tr>
 </table>
+<p><strong>Come verificare che il codice sia quello descritto</strong>, senza fidarsi della parola:</p>
+<ul>
+  <li><strong>Scheda Rete</strong> degli strumenti di sviluppo: mostra ogni richiesta effettuata, con dominio e file.</li>
+  <li><strong>Scheda Sorgenti</strong>: il codice della pagina si legge per intero, perché non è offuscato né caricato da terzi.</li>
+  <li><strong>Modalità aereo</strong>: dopo il primo uso la pagina continua a funzionare senza connessione.</li>
+  <li><strong>Pacchetto dell'estensione</strong>: viene inviato con il suo SHA-256, da confrontare prima dell'installazione.</li>
+</ul>
+
+<h2>10-bis. Componenti di terze parti e licenze</h2>
+<p>
+  La versione web è costruita con librerie libere, incluse nel sito e servite dallo stesso dominio
+  (nessuna CDN). Le licenze sono riportate nei file di attribuzione distribuiti con la pagina.
+</p>
+<table class="nobreak">
+  <tr><th>Componente</th><th>Uso</th><th>Licenza</th></tr>
+  <tr><td>Transformers.js + ONNX Runtime</td><td>modello di IA locale</td><td>Apache-2.0 / MIT</td></tr>
+  <tr><td>PDF.js</td><td>lettura dei PDF</td><td>Apache-2.0</td></tr>
+  <tr><td>pdf-lib + fontkit</td><td>creazione dei PDF</td><td>MIT</td></tr>
+  <tr><td>Tesseract.js</td><td>OCR delle scansioni</td><td>Apache-2.0</td></tr>
+  <tr><td>Mammoth · SheetJS · docx · PapaParse · fflate</td><td>Word, Excel, CSV, ZIP</td><td>BSD-2 / Apache-2.0 / MIT</td></tr>
+  <tr><td>Liberation Sans</td><td>font incorporato nei PDF esportati</td><td>SIL Open Font License 1.1</td></tr>
+</table>
+<p>
+  Le attribuzioni complete sono nei file <code>assets/*.LEGAL.txt</code>, <code>assets/FONT-LICENSE.txt</code>
+  e <code>assets/ocr/core/LICENSE</code>. Nessuna di queste librerie trasmette dati: sono codice che
+  gira nella scheda.
+</p>
 
 <h2>11. Contatti</h2>
 <p>
-  Lorenzo Franchini — <a href="mailto:lorenzo.franchinilf.04@gmail.com">lorenzo.franchinilf.04@gmail.com</a> — boszboll.github.io/sito-professionisti<br>
+  Lorenzo Franchini — <a href="mailto:gdpraisanitizer@gmail.com">gdpraisanitizer@gmail.com</a> — boszboll.github.io/sito-professionisti<br>
   Risposta entro tre giorni lavorativi.
 </p>
 
