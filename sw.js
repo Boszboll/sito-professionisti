@@ -5,7 +5,7 @@
  * star parlando con nessun server. Le richieste verso altri domini (i file
  * del modello AI) non vengono toccate.
  */
-const VERSIONE = "gdpr-sanitizer-v3";
+const VERSIONE = "gdpr-sanitizer-v4";
 // Solo i file indispensabili per aprire la pagina: HTML, CSS e il bundle con
 // i suoi chunk iniziali. Le librerie per office, PDF, AI e OCR (decine di MB)
 // NON si precaricano: entrano nella cache alla prima utilizzazione reale.
@@ -16,6 +16,7 @@ const CORE = [
   "index.html",
   "app.html",
   "scheda-tecnica.html",
+  "condizioni.html",
   "sanitizer.js",
   "assets/app.js",
   "assets/app.css",
