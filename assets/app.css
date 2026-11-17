@@ -110,6 +110,9 @@ textarea:focus { outline: 2px solid rgba(29, 78, 216, 0.35); border-color: var(-
   margin-top: 12px; padding: 12px 14px;
   border: 1px solid var(--line); border-radius: 10px; background: var(--bg);
 }
+/* Senza questa regola il display:flex qui sopra vince sull'attributo hidden:
+   il riquadro resterebbe visibile (e coprirebbe i clic) anche senza PDF. */
+.pdf-pagine[hidden] { display: none; }
 .pdf-pagine label { font-size: 14px; font-weight: 650; }
 .pdf-pagine .file-hint { width: 100%; margin: 0; }
 .input-intervallo {
